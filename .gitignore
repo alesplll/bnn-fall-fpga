@@ -1,0 +1,12 @@
+model/data/raw/
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+*.egg-info/
+venv/
+.venv/
+
+# личная тулза для сборки отчётов (не нужна для самого проекта)
+docxgen.py
+assets/
+build_report.py

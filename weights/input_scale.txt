@@ -1,0 +1,7 @@
+# масштаб квантования входа per-feature: x_i8 = round(x_raw / scale)
+peak_acc_g: 0.1352605739
+tilt_deg: 1.1159267006
+peak_gyro_dps: 6.9822526296
+jerk_g_per_s: 19.1713238939
+post_peak_var_g2: 0.0227314414
+w_scale_A: 0.7033504792
