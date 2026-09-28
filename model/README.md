@@ -56,7 +56,7 @@ python3 -m venv .venv && source .venv/bin/activate   # опционально
 pip install -r requirements.txt
 
 cd src
-python3 dataset.py          # сырые файлы -> ../data/processed/features_*.csv
+python3 dataset.py          # сырые файлы -> ../data/processed/ и ../../dataset/sisfall_5features.csv
 python3 train.py               # обучение BNN -> ../artifacts/model_float.npz
 python3 evaluate.py               # метрики + графики -> ../artifacts/
 python3 export_vectors.py            # обученные веса + тестовые векторы -> ../../weights/

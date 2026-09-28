@@ -41,9 +41,12 @@ def split_train_test(df: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame]:
 
 
 def main() -> None:
-    root = Path(__file__).resolve().parent.parent / "data" / "raw" / "SisFall_dataset"
-    out_dir = Path(__file__).resolve().parent.parent / "data" / "processed"
+    model_dir = Path(__file__).resolve().parent.parent
+    root = model_dir / "data" / "raw" / "SisFall_dataset"
+    out_dir = model_dir / "data" / "processed"
     out_dir.mkdir(parents=True, exist_ok=True)
+    dataset_dir = model_dir.parent / "dataset"
+    dataset_dir.mkdir(parents=True, exist_ok=True)
 
     print(f"Scanning {root} ...")
     df = build_feature_table(root)
@@ -59,6 +62,12 @@ def main() -> None:
     train_df.to_csv(out_dir / "features_train.csv", index=False)
     test_df.to_csv(out_dir / "features_test.csv", index=False)
     print(f"Saved to {out_dir}")
+
+    # единый файл-дистрибутив датасета (та же таблица + колонка split) для /dataset
+    master = df.copy()
+    master.insert(1, "split", np.where(master["subject"].isin(TEST_SUBJECTS), "test", "train"))
+    master.to_csv(dataset_dir / "sisfall_5features.csv", index=False)
+    print(f"Saved master dataset to {dataset_dir / 'sisfall_5features.csv'}")
 
 
 if __name__ == "__main__":
