@@ -16,6 +16,7 @@ ROOT = Path(__file__).resolve().parent
 SOURCE = ROOT / "source_pr1.docx"
 OUTPUT = ROOT / "Отчет_ПР1_ПР2_Рябец_Головин_Гришин.docx"
 SCREENSHOTS = ROOT / "screenshots"
+RTL = ROOT.parent / "rtl"
 
 
 def replace_text(paragraph, value: str) -> None:
@@ -79,6 +80,11 @@ def evidence_figure_before(anchor, filename: str, caption: str) -> None:
     label = anchor.insert_paragraph_before(caption, style="Report Body")
     label.alignment = WD_ALIGN_PARAGRAPH.CENTER
     label.paragraph_format.space_after = Pt(12)
+
+
+def verilog_without_comments(filename: str) -> str:
+    lines = (RTL / filename).read_text(encoding="utf-8").splitlines()
+    return "\n".join(line for line in lines if not line.lstrip().startswith("//")).strip()
 
 
 def main() -> None:
@@ -161,7 +167,7 @@ def main() -> None:
     replace_text(p[35], "ЗАКЛЮЧЕНИЕ\t21")
     replace_text(p[36], "СПИСОК ИСПОЛЬЗОВАННЫХ ИСТОЧНИКОВ\t22")
     replace_text(p[37], "ПРИЛОЖЕНИЕ А КЛЮЧЕВЫЕ ФРАГМЕНТЫ ПРОГРАММЫ\t23")
-    toc_before(p[38], "ПРИЛОЖЕНИЕ Б ФРАГМЕНТЫ RTL-МОДЕЛИ\t28", p[34])
+    toc_before(p[38], "ПРИЛОЖЕНИЕ Б ИСХОДНЫЙ КОД RTL-МОДЕЛИ\t28", p[34])
 
     anchor = p[109]  # Insert all PR2 material before the original conclusion.
     before(anchor, "6 ПОСТАНОВКА ЗАДАЧИ ПРАКТИЧЕСКОЙ РАБОТЫ № 2", "Report Heading 1")
@@ -293,31 +299,18 @@ def main() -> None:
            "Report Source")
 
     doc.add_paragraph("Приложение Б", style="Report Appendix")
-    doc.add_paragraph("Ключевые фрагменты RTL-модели", style="Report Appendix Title")
+    doc.add_paragraph("Исходный код RTL-модели", style="Report Appendix Title")
     doc.add_paragraph(
-        "Ниже приведены операции, определяющие совпадение RTL-модели с "
-        "целочисленным эталоном.", style="Report Body")
-    doc.add_paragraph("Листинг Б.1 — Знаковое накопление и бинаризация слоя A", style="Report Listing Caption")
-    code = doc.add_paragraph(style="Report Code")
-    code.add_run(
-        "accumulator = $signed(b_a[h]);\n"
-        "for (j = 0; j < 5; j = j + 1) begin\n"
-        "    product = $signed(input_features[39 - 8*j -: 8])\n"
-        "            * $signed(w_a[j*8 + h]);\n"
-        "    accumulator = accumulator + {{16{product[15]}}, product};\n"
-        "end\n"
-        "hidden_bits[h] = (accumulator >= 32'sd0);"
-    )
-    doc.add_paragraph("Листинг Б.2 — XNOR, popcount и пороговое решение", style="Report Listing Caption")
-    code = doc.add_paragraph(style="Report Code")
-    code.add_run(
-        "for (h = 0; h < 8; h = h + 1)\n"
-        "    matching_bits = matching_bits + (hidden_bits[h] ~^ w_b[h]);\n"
-        "score = ($signed({28'b0, matching_bits}) <<< 1)\n"
-        "      - 32'sd8 + $signed(b_b[0]);\n"
-        "prediction_next = (score >= 32'sd0);"
-    )
-    for run in doc.paragraphs[-1].runs:
+        "Приведён полный код классификатора и самопроверяющегося "
+        "тестбенча, использованных в симуляции. Комментарии опущены.",
+        style="Report Body")
+    for number, filename, title in (
+        ("Б.1", "bnn_classifier.v", "RTL-модуль классификатора"),
+        ("Б.2", "tb_bnn_classifier.v", "Самопроверяющийся тестбенч"),
+    ):
+        doc.add_paragraph(f"Листинг {number} — {title}", style="Report Listing Caption")
+        code = doc.add_paragraph(style="Report Code")
+        run = code.add_run(verilog_without_comments(filename))
         run.font.size = Pt(9)
 
     doc.save(OUTPUT)
