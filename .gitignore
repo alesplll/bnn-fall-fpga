@@ -5,6 +5,8 @@ __pycache__/
 *.egg-info/
 venv/
 .venv/
+vivado_pr2/
+*.vcd
 
 # личная тулза для сборки отчётов (не нужна для самого проекта)
 docxgen.py
