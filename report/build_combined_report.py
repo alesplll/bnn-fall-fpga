@@ -15,6 +15,7 @@ from docx.shared import Cm, Pt
 ROOT = Path(__file__).resolve().parent
 SOURCE = ROOT / "source_pr1.docx"
 OUTPUT = ROOT / "Отчет_ПР1_ПР2_Рябец_Головин_Гришин.docx"
+SCREENSHOTS = ROOT / "screenshots"
 
 
 def replace_text(paragraph, value: str) -> None:
@@ -70,6 +71,16 @@ def table_before(document, anchor, headers: list[str], rows: list[list[str]], wi
     return table
 
 
+def evidence_figure(document, filename: str, caption: str) -> None:
+    paragraph = document.add_paragraph()
+    paragraph.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    paragraph.paragraph_format.keep_with_next = True
+    paragraph.add_run().add_picture(str(SCREENSHOTS / filename), width=Cm(15.5))
+    label = document.add_paragraph(caption, style="Report Body")
+    label.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    label.paragraph_format.space_after = Pt(12)
+
+
 def main() -> None:
     doc = Document(SOURCE)
     p = doc.paragraphs
@@ -106,6 +117,7 @@ def main() -> None:
     replace_text(p[36], "СПИСОК ИСПОЛЬЗОВАННЫХ ИСТОЧНИКОВ\t20")
     replace_text(p[37], "ПРИЛОЖЕНИЕ А КЛЮЧЕВЫЕ ФРАГМЕНТЫ ПРОГРАММЫ\t21")
     toc_before(p[38], "ПРИЛОЖЕНИЕ Б ФРАГМЕНТЫ RTL-МОДЕЛИ\t26", p[34])
+    toc_before(p[38], "ПРИЛОЖЕНИЕ В ПОДТВЕРЖДЕНИЕ ПРОВЕРКИ В VIVADO\t27", p[34])
 
     anchor = p[109]  # Insert all PR2 material before the original conclusion.
     before(anchor, "6 ПОСТАНОВКА ЗАДАЧИ ПРАКТИЧЕСКОЙ РАБОТЫ № 2", "Report Heading 1")
@@ -192,7 +204,8 @@ def main() -> None:
                  ["Набор", "Число", "Расхождения по выходу", "Расхождения внутри слоёв"],
                  [["Исходный контрольный", "64", "0", "Промежуточные значения не сравнивались"],
                   ["Полный тестовый", "2331", "0", "0 по a_bits и y"],
-                  ["Граничные значения int8", "14", "0", "0 по a_bits и y"]],
+                  ["Граничные значения int8", "14", "0", "0 по a_bits и y"],
+                  ["Vivado XSim, полный набор", "2331", "0", "0 по a_bits и y"]],
                  [4.0, 2.1, 3.3, 6.1])
     after_table = before(anchor,
            "Например, для x=[14,16,27,2,0] модель и RTL дали "
@@ -201,10 +214,13 @@ def main() -> None:
            "эквивалентность RTL целочисленному эталону на проверенных входах.", "Report Body")
     after_table.paragraph_format.space_before = Pt(6)
     before(anchor,
-           "Подтверждена поведенческая симуляция в Icarus Verilog. "
-           "Для Vivado 2022.2 подготовлен проектный Tcl-сценарий, но "
-           "его запуск в Vivado и синтез не проводились; результаты "
-           "по ресурсам ПЛИС и таймингам не заявляются.", "Report Body")
+           "В Vivado 2022.2 создан проект bnn_pr2 для xc7a100tcsg324-1. "
+           "Поведенческая симуляция XSim завершилась сообщением "
+           "PASS: 2331 vectors. Временные диаграммы, результат синтеза и "
+           "схема приведены в приложении В. Синтез успешно завершился: "
+           "использовано 629 Slice LUT, 2 Slice Register, 45 Bonded IOB "
+           "и 1 BUFGCTRL. Оценка ресурсов относится только к синтезу; "
+           "размещение, трассировка и анализ таймингов не выполнялись.", "Report Body")
 
     replace_text(
         p[110],
@@ -216,9 +232,10 @@ def main() -> None:
         "бинаризацию, XNOR и popcount. В поведенческой симуляции Icarus "
         "Verilog получено полное совпадение с эталоном на 64 контрольных, "
         "2331 тестовых и 14 граничных входах; на полном наборе совпали "
-        "также промежуточные состояния обоих слоёв. Подготовлены исходники "
-        "и сценарий проекта для Vivado 2022.2 с целевым кристаллом "
-        "xc7a100tcsg324-1. Таким образом, системная модель и её "
+        "также промежуточные состояния обоих слоёв. В Vivado 2022.2 "
+        "создан проект для xc7a100tcsg324-1, симуляция XSim прошла "
+        "2331 вектор без расхождений, синтез завершился успешно и "
+        "получена логическая схема. Таким образом, системная модель и её "
         "функционально проверенный RTL-эквивалент готовы к следующему "
         "этапу работы.",
     )
@@ -259,6 +276,19 @@ def main() -> None:
     )
     for run in doc.paragraphs[-1].runs:
         run.font.size = Pt(9)
+
+    doc.add_paragraph("Приложение В", style="Report Appendix")
+    doc.add_paragraph("Подтверждение проверки в Vivado 2022.2", style="Report Appendix Title")
+    doc.add_paragraph(
+        "Снимки экрана получены при запуске проекта bnn_pr2 для "
+        "xc7a100tcsg324-1. Они фиксируют состав проекта, результат "
+        "поведенческой симуляции, временные диаграммы и синтезированную "
+        "схему с отчётом использования ресурсов.", style="Report Body")
+    evidence_figure(doc, "vivado_project.jpg", "Рисунок В.1 — Проект bnn_pr2 и целевой кристалл")
+    evidence_figure(doc, "vivado_simulation_pass.jpg", "Рисунок В.2 — Успешная симуляция 2331 эталонного вектора")
+    evidence_figure(doc, "vivado_waveform.jpg", "Рисунок В.3 — Временные диаграммы входов и выходов RTL-модели")
+    evidence_figure(doc, "vivado_synthesized_schematic.jpg", "Рисунок В.4 — Общий вид синтезированной логической схемы")
+    evidence_figure(doc, "vivado_utilization.jpg", "Рисунок В.5 — Фрагмент схемы и использование ресурсов после синтеза")
 
     doc.save(OUTPUT)
     print(OUTPUT)
