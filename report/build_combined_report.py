@@ -293,7 +293,7 @@ def main() -> None:
            "Report Source")
 
     doc.add_paragraph("Приложение Б", style="Report Appendix")
-    doc.add_paragraph("Ключевые фрагменты RTL-модели и тестбенча", style="Report Appendix Title")
+    doc.add_paragraph("Ключевые фрагменты RTL-модели", style="Report Appendix Title")
     doc.add_paragraph(
         "Ниже приведены операции, определяющие совпадение RTL-модели с "
         "целочисленным эталоном.", style="Report Body")
