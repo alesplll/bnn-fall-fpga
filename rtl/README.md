@@ -41,6 +41,13 @@ vvp /tmp/bnn_pr2_edge
 
 ## Проект Vivado 2022.2
 
+Проверенный результат: XSim завершил полный тест из 2331 вектора с
+сообщением `PASS: 2331 vectors`; **Run Synthesis** завершился успешно.
+В **Open Synthesized Design → Schematic** доступна схема классификатора,
+а в **Report Utilization** — оценка ресурсов: 629 Slice LUT,
+2 Slice Register, 45 Bonded IOB и 1 BUFGCTRL. Это результаты синтеза;
+размещение и проверка на плате не проводились.
+
 На Windows распакуйте репозиторий в каталог с коротким путём из английских
 букв, цифр и подчёркиваний, например `C:\npu_pr2\bnn_fall_fpga`. Из корня
 репозитория запустите:
@@ -55,6 +62,12 @@ vivado.bat -mode batch -source rtl/create_vivado_project.tcl
 `PASS: 2331 vectors`. Для проверки 64 примеров удалите `FULL_TEST` из
 свойства `verilog_define` у `sim_1`; для граничных примеров укажите
 `EDGE_TEST`.
+
+Чтобы увидеть временные диаграммы, добавьте сигналы `clk`, `rst_n`,
+`valid_in`, `input_features`, `valid_out`, `fall_detected` в окно Waveform,
+выполните `restart`, затем `run 200 ns` и настройте масштаб времени.
+Для схемы выполните **Run Synthesis**, затем **Open Synthesized Design →
+Schematic**; сводка ресурсов открывается через **Report Utilization**.
 
 По умолчанию проект использует `xc7a100tcsg324-1`, указанный для курса.
 При работе с другим кристаллом задайте переменную окружения `FPGA_PART`
