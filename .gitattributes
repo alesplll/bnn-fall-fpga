@@ -1,0 +1,2 @@
+# Keep Vivado's original Windows reports byte-for-byte.
+report/evidence/pr3/*.rpt -text -diff
