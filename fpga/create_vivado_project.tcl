@@ -12,6 +12,7 @@ set project_file [file join $project_dir bnn_pr3.xpr]
 if {[file exists $project_file]} {
     error "PR3 project already exists: $project_file. Open it instead of recreating it."
 }
+catch {close_sim}
 catch {close_project}
 create_project bnn_pr3 $project_dir -part $part
 set_property target_language Verilog [current_project]
@@ -42,6 +43,7 @@ add_files -fileset constrs_1 [list $xdc_file]
 
 update_compile_order -fileset sources_1
 update_compile_order -fileset sim_1
+set_property top tb_fpga_top [get_filesets sim_1]
 puts "PR3_PROJECT: $project_file"
 puts "Simulation top: tb_fpga_top; expected PASS after three 64-vector runs."
 puts "Only a 20 ns clock constraint is set; board pin assignments are absent."

@@ -5,6 +5,7 @@ set repo_root [file normalize [file join [file dirname [info script]] ..]]
 set project_dir [file join $repo_root vivado_pr3]
 set project_file [file join $project_dir bnn_pr3.xpr]
 if {[file exists $project_file]} {
+    catch {close_sim}
     catch {close_project}
     open_project $project_file
 } else {

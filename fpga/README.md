@@ -40,8 +40,9 @@ source fpga/run_implementation.tcl
 Сценарий создаёт `vivado_pr3/bnn_pr3.xpr` под кристалл
 `xc7a100tcsg324-1`, выполняет синтез, размещение и трассировку,
 сохраняет отчёты и контрольную точку в `vivado_pr3/reports/`.
-Для просмотра проекта откройте `.xpr` в Vivado, запустите **Run Behavioral
-Simulation** и убедитесь, что в консоли есть сообщение
+Для симуляции в Tcl Console выполните `source fpga/run_simulation.tcl`
+из корня репозитория. Это закрывает предыдущую симуляцию и запускает
+тестбенч ПР3 `tb_fpga_top`. В консоли должно появиться сообщение
 `PASS: FPGA prototype self-test; 64 vectors, error detection and restart`.
 Для схемы и размещения используйте **Open Implemented Design**.
 
