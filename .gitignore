@@ -6,6 +6,9 @@ __pycache__/
 venv/
 .venv/
 vivado_pr2/
+vivado_pr3/
+vivado_pr3.log
+vivado_pr3.jou
 *.vcd
 
 # личная тулза для сборки отчётов (не нужна для самого проекта)
