@@ -1,8 +1,7 @@
-"""Extend the verified PR1–PR2 report with the measured PR3 prototype results."""
+"""Add measured PR3 results to the supplied report's PR1–PR2 continuation."""
 
 from __future__ import annotations
 
-import re
 from pathlib import Path
 
 from docx import Document
@@ -15,275 +14,276 @@ from build_combined_report import (
     table_before,
     toc_before,
 )
-
+from read_vivado_results import parse
 
 ROOT = Path(__file__).resolve().parent
 SOURCE = ROOT / "Отчет_ПР1_ПР2_Рябец_Головин_Гришин.docx"
 OUTPUT = ROOT / "Отчет_ПР1_ПР2_ПР3_Рябец_Головин_Гришин.docx"
-EVIDENCE = ROOT / "evidence" / "pr3"
-FPGA = ROOT.parent / "fpga"
+RESULTS = ROOT / "evidence" / "pr23"
+REPO = ROOT.parent
 
 
-def field(filename: str, pattern: str) -> str:
-    content = (EVIDENCE / filename).read_text(encoding="utf-8")
-    match = re.search(pattern, content, re.MULTILINE)
-    if not match:
-        raise ValueError(f"Missing expected result in {filename}: {pattern}")
-    return match.group(1)
+def n(value: float, digits: int = 3) -> str:
+    return f"{value:.{digits}f}".replace(".", ",")
+
+
+def used(case: dict, resource: str) -> int:
+    return case["routed"][resource]["used"]
 
 
 def source_without_comments(filename: str) -> str:
-    lines = (FPGA / filename).read_text(encoding="utf-8").splitlines()
+    lines = (REPO / filename).read_text(encoding="utf-8").splitlines()
     return "\n".join(
-        line for line in lines
-        if not line.lstrip().startswith(("//", "#"))
+        line for line in lines if not line.lstrip().startswith(("//", "#"))
     ).strip()
 
 
 def main() -> None:
-    lut = field("utilization_routed.rpt", r"\| Slice LUTs\s+\|\s+(\d+)")
-    registers = field("utilization_routed.rpt", r"\| Slice Registers\s+\|\s+(\d+)")
-    slices = field("utilization_routed.rpt", r"\| Slice\s+\|\s+(\d+)")
-    iob = field("utilization_routed.rpt", r"\| Bonded IOB\s+\|\s+(\d+)")
-    bufg = field("utilization_routed.rpt", r"\| BUFGCTRL\s+\|\s+(\d+)")
-    bram = field("utilization_routed.rpt", r"\| Block RAM Tile\s+\|\s+(\d+)")
-    dsp = field("utilization_routed.rpt", r"\| DSPs\s+\|\s+(\d+)")
-    routed = field("route_status.rpt", r"# of fully routed nets\.+\s*:\s*(\d+)")
-    routable = field("route_status.rpt", r"# of routable nets\.+\s*:\s*(\d+)")
-    routing_errors = field("route_status.rpt", r"# of nets with routing errors\.+\s*:\s*(\d+)")
-    wns = field("timing_routed.rpt", r"^\s*([\d.]+)\s+0\.000\s+0\s+53\s+[\d.]+\s+0\.000")
-    whs = field("timing_routed.rpt", r"^\s*[\d.]+\s+0\.000\s+0\s+53\s+([\d.]+)\s+0\.000")
-    no_input_delay = field("timing_routed.rpt", r"There are (\d+) input ports with no input delay specified")
-    no_output_delay = field("timing_routed.rpt", r"There are (\d+) ports with no output delay specified")
-    drc_violations = field("drc_routed.rpt", r"Violations found:\s*(\d+)")
-    if routed != routable or routing_errors != "0":
-        raise ValueError("Route report does not confirm complete error-free routing")
-
+    evidence = parse(RESULTS)
+    c = evidence["cases"]
+    baseline = c["baseline_20"]
+    pipeline = c["pipeline_20"]
+    proto = c["pr3_prototype_20"]
+    proto_pipe = c["pr3_pipeline_20"]
+    base_period = baseline["period_ns"] - baseline["wns_ns"]
+    pipe_period = pipeline["period_ns"] - pipeline["wns_ns"]
+    if base_period <= 0 or pipe_period <= 0:
+        raise ValueError("Cannot derive a positive critical period")
+    speed_ratio = base_period / pipe_period
+    comparison = (
+        f"Расчётная длительность критического внутреннего пути уменьшилась "
+        f"с {n(base_period)} до {n(pipe_period)} нс; оценка предельной частоты "
+        f"увеличилась в {n(speed_ratio, 2)} раза. "
+        if speed_ratio > 1.0 else
+        f"После добавления регистра расчётная длительность критического "
+        f"внутреннего пути изменилась с {n(base_period)} до {n(pipe_period)} нс; "
+        f"увеличение предельной частоты не получено. "
+    )
+    ten_ns = (
+        f"При периоде 10 нс исходный вариант имеет WNS "
+        f"{n(c['baseline_10']['wns_ns'])} нс, конвейерный — "
+        f"{n(c['pipeline_10']['wns_ns'])} нс. "
+    )
     doc = Document(SOURCE)
     p = doc.paragraphs
     replace_text(p[8], "ОТЧЁТ ПО ПРАКТИЧЕСКИМ РАБОТАМ № 1–3")
-    replace_text(
-        p[11],
-        "Тема: Программная модель, RTL-модель и прототип нейросетевого классификатора падений на ПЛИС",
-    )
+    replace_text(p[11], "Тема: Программная модель, RTL-модель и прототип классификатора падений на ПЛИС")
     replace_text(
         p[44],
-        "Цель практических работ № 1–3 — построить программную эталонную "
-        "модель нейроускорителя, разработать её RTL-эквивалент на Verilog, "
-        "проверить совпадение вычислений в симуляции и реализовать прототип "
-        "классификатора для выбранного кристалла ПЛИС. Модель обрабатывает "
-        "подготовленные признаки движения и выдаёт один бит решения.",
+        "Цель работы — разработать программный эталон классификатора падений, "
+        "реализовать его на Verilog, проверить совпадение результатов и "
+        "получить прототип для ПЛИС. После функциональной проверки "
+        "исследуется влияние регистра между слоями на временные характеристики "
+        "и использование ресурсов.",
     )
-    before(
-        p[54],
-        "– создать верхний модуль прототипа с контрольным набором, проверить "
-        "его работу симуляцией и выполнить размещение и трассировку в Vivado;",
-        "Report Body",
-    )
-    before(
-        p[54],
-        "– оценить использование ресурсов, результат трассировки и временные "
-        "характеристики для выбранного кристалла.",
-        "Report Body",
-    )
+    before(p[54], "– проверить верхний модуль с контрольными данными и выполнить размещение и трассировку;", "Report Body")
+    before(p[54], "– сравнить исходный и конвейерный вычислительные тракты при одинаковых входах, кристалле и ограничениях.", "Report Body")
 
-    toc_before(p[38], "9 ПРОТОТИП НА ПЛИС\t21", p[37])
-    toc_before(p[38], "10 СИМУЛЯЦИЯ И РЕЗУЛЬТАТЫ РЕАЛИЗАЦИИ\t24", p[37])
+    toc_before(p[38], "9 ПРОТОТИП И КОНВЕЙЕРНАЯ АРХИТЕКТУРА\t21", p[37])
+    toc_before(p[38], "10 ПРОВЕРКА И РЕЗУЛЬТАТЫ РЕАЛИЗАЦИИ\t24", p[37])
     replace_text(p[38], "ЗАКЛЮЧЕНИЕ\t26")
     replace_text(p[39], "СПИСОК ИСПОЛЬЗОВАННЫХ ИСТОЧНИКОВ\t27")
     replace_text(p[40], "ПРИЛОЖЕНИЕ А КЛЮЧЕВЫЕ ФРАГМЕНТЫ ПРОГРАММЫ\t28")
     replace_text(p[41], "ПРИЛОЖЕНИЕ Б ИСХОДНЫЙ КОД RTL-МОДЕЛИ\t33")
-    toc_before(p[42], "ПРИЛОЖЕНИЕ В КОД ПРОТОТИПА И ОГРАНИЧЕНИЕ\t36", p[41])
+    toc_before(p[42], "ПРИЛОЖЕНИЕ В КОД ПРОТОТИПА И КОНВЕЙЕРА\t36", p[41])
 
     anchor = p[149]
-    before(anchor, "9 ПРОТОТИП НА ПЛИС", "Report Heading 1")
-    before(anchor, "9.1 Состав прототипа и интерфейс", "Report Heading 2")
+    before(anchor, "9 ПРОТОТИП И КОНВЕЙЕРНАЯ АРХИТЕКТУРА", "Report Heading 1")
+    before(anchor, "9.1 Верхний модуль и контрольные данные", "Report Heading 2")
     before(
         anchor,
-        "Верхний модуль fpga_top соединяет неизменённый RTL-классификатор "
-        "с постоянным набором из 64 входных слов и 64 ожидаемых ответов. "
-        "Набор включает 32 примера падения и 32 примера обычной активности. "
-        "Входы и эталонные биты загружаются в память при инициализации. "
-        "После импульса start автомат последовательно подаёт каждый вектор "
-        "на классификатор и сверяет зарегистрированный ответ с эталоном. "
-        "На один вектор приходятся два такта: подача и проверка. После "
-        "последней проверки устанавливаются done и pass, а счётчики "
-        "checked_count и error_count показывают объём проверки и число "
-        "расхождений. Повторный импульс start начинает новый прогон.",
+        "Верхний модуль fpga_top хранит 64 входных слова и 64 ожидаемых бита, "
+        "подготовленных программной моделью. Автомат IDLE–DRIVE–CHECK "
+        "подаёт по одному вектору, сверяет ответ классификатора и ведёт "
+        "счётчики проверок и расхождений. После последней проверки "
+        "устанавливаются done и pass. Повторный импульс start запускает "
+        "проверку заново. Для конвейерного классификатора реализован "
+        "fpga_top_pipelined: он подаёт новый вектор каждый такт и "
+        "задерживает индекс эталона вместе с ответом.",
         "Report Body",
     )
-    before(anchor, "Таблица 9.1 — Внешние сигналы прототипа", "Report Table Caption")
+    before(anchor, "Таблица 9.1 — Сигналы верхнего модуля", "Report Table Caption")
     table_before(
-        doc,
-        anchor,
+        doc, anchor,
         ["Сигнал", "Разрядность", "Назначение"],
         [
             ["clk, rst_n", "1 + 1", "Тактирование и синхронный сброс"],
-            ["start", "1", "Импульс запуска контрольного прогона"],
-            ["busy, done, pass", "1 + 1 + 1", "Ход, завершение и результат проверки"],
-            ["checked_count, error_count", "7 + 7", "Число проверенных векторов и расхождений"],
-            ["last_prediction", "1", "Последний ответ классификатора"],
+            ["start", "1", "Начало контрольного прогона"],
+            ["busy, done, pass", "1 + 1 + 1", "Ход, завершение и результат"],
+            ["checked_count, error_count", "7 + 7", "Проверенные векторы и расхождения"],
+            ["last_prediction", "1", "Последний ответ сети"],
         ],
         [5.0, 2.8, 7.7],
     )
     before(
         anchor,
-        "Структура реализованного верхнего уровня приведена на рисунке 9.1. "
-        "Внутри него находится тот же вычислительный тракт 5→8→1, который "
-        "проверен в практической работе № 2; дополнительная логика выполняет "
-        "подачу контрольных данных и самопроверку.",
+        "Контрольный набор подтверждает работу автомата, но он постоянен "
+        "для синтезатора. Поэтому его схема не используется для оценки "
+        "выигрыша в частоте: Vivado вправе упростить вычисления под 64 "
+        "известных слова. Размещение верхнего модуля показано на рисунке 9.1.",
         "Report Body",
     )
-    evidence_figure_before(anchor, "vivado_pr3_schematic.jpg", "Рисунок 9.1 — Логическая схема верхнего уровня после реализации")
+    evidence_figure_before(anchor, "vivado_pr23_prototype_device.jpg", "Рисунок 9.1 — Размещение прототипа на кристалле")
 
-    before(anchor, "9.2 Ограничения и физическая реализация", "Report Heading 2")
+    before(anchor, "9.2 Регистры между вычислительными слоями", "Report Heading 2")
     before(
         anchor,
-        "Проект bnn_pr3 реализован в Vivado 2022.2 для Artix-7 "
-        "xc7a100tcsg324-1. Ограничение create_clock задаёт период 20 нс "
-        "(расчётную частоту 50 МГц). После синтеза выполнены оптимизация, "
-        "размещение и трассировка. Окно Device с размещёнными элементами "
-        "показано на рисунке 9.2. Это результат реализации для выбранного "
-        "кристалла; физические контакты конкретной отладочной платы не "
-        "назначались.",
+        "В исходном bnn_classifier оба слоя образуют одну комбинационную "
+        "цепь до регистра ответа. Конвейерный вариант состоит из модулей "
+        "bnn_layer_a и bnn_layer_b. Восемь бит после слоя A и сигнал valid "
+        "записываются в регистры; слой B формирует результат для следующего "
+        "фронта. Регистр поставлен на границе слоёв, а не после каждого "
+        "арифметического действия. Оба ядра принимают один вектор каждый "
+        "такт, но конвейерный ответ появляется на один такт позже. "
+        "Объявление reg в комбинационном always само по себе не означает "
+        "физический регистр; его создаёт запись на posedge clk.",
         "Report Body",
     )
-    evidence_figure_before(anchor, "vivado_pr3_device_full.jpg", "Рисунок 9.2 — Размещение прототипа на кристалле в Vivado")
+    evidence_figure_before(anchor, "vivado_pr23_pipeline_schematic.jpg", "Рисунок 9.2 — Схема конвейерного классификатора")
+
+    before(anchor, "9.3 Условия сравнения", "Report Heading 2")
     before(
         anchor,
-        f"Отчёт маршрутизации зафиксировал {routable} трассируемых цепей; "
-        f"все {routed} проложены, ошибок маршрутизации {routing_errors}. "
-        "Таким образом, логические соединения схемы физически проложены "
-        "средствами Vivado. Итоговый статус синтеза и реализации показан "
-        "на рисунке 9.3.",
+        "Оба варианта собраны в одном проекте Vivado 2022.2 для "
+        "xc7a100tcsg324-1. Измерительные верхние модули имеют одинаковый "
+        "40-битный вход, входной регистр, интерфейс valid и одни и те же "
+        "параметры сети. Входы остаются переменными. Для каждого варианта "
+        "выполнены синтез, размещение и трассировка при периодах 20 и 10 нс. "
+        "Таким образом, сравнивается именно граница регистров "
+        "вычислительного тракта. Оценки частоты относятся только к "
+        "ограниченным внутренним синхронным путям.",
         "Report Body",
     )
-    evidence_figure_before(anchor, "vivado_pr3_statuses.jpg", "Рисунок 9.3 — Завершение синтеза и реализации в Vivado")
 
-    before(anchor, "10 СИМУЛЯЦИЯ И РЕЗУЛЬТАТЫ РЕАЛИЗАЦИИ", "Report Heading 1")
-    before(anchor, "10.1 Проверка работы верхнего модуля", "Report Heading 2")
+    before(anchor, "10 ПРОВЕРКА И РЕЗУЛЬТАТЫ РЕАЛИЗАЦИИ", "Report Heading 1")
+    before(anchor, "10.1 Функциональная проверка", "Report Heading 2")
     before(
         anchor,
-        "В XSim выполнена поведенческая симуляция самопроверяющегося "
-        "тестбенча tb_fpga_top. Первый запуск подтвердил совпадение "
-        "всех 64 ответов с эталоном. Затем один ожидаемый бит был "
-        "намеренно изменён: прототип зафиксировал одно расхождение и "
-        "снял флаг pass. После восстановления эталона повторный запуск "
-        "снова завершился без ошибок. Консоль XSim вывела сообщение "
-        "PASS: FPGA prototype self-test; 64 vectors, error detection and restart "
-        "(рисунок 10.1). Такая проверка подтверждает работу автомата "
-        "подачи векторов, счётчиков и механизма обнаружения ошибок в симуляции.",
+        "Поведенческая симуляция исходного и конвейерного ядер сверила "
+        "2331 вход с программным эталоном. Для обоих измерительных "
+        "верхних модулей те же 2331 ответа проверены также в "
+        "функциональной симуляции после синтеза. Самопроверяющиеся "
+        "прототипы прошли контрольный набор из 64 слов; тестбенчи "
+        "подтвердили обнаружение намеренно изменённого эталонного бита "
+        "и повторный успешный запуск. Во всех указанных прогонах "
+        "расхождений нет.",
         "Report Body",
     )
-    evidence_figure_before(anchor, "vivado_pr3_simulation_pass.jpg", "Рисунок 10.1 — Результат симуляции верхнего модуля в XSim")
+    evidence_figure_before(anchor, "vivado_pr23_simulation_pass.jpg", "Рисунок 10.1 — Результат симуляции в XSim")
 
-    before(anchor, "10.2 Ресурсы, трассировка и временные характеристики", "Report Heading 2")
-    before(anchor, "Таблица 10.1 — Использование ресурсов после трассировки", "Report Table Caption")
+    before(anchor, "10.2 Ресурсы и временные характеристики", "Report Heading 2")
+    before(anchor, "Таблица 10.1 — Сравнение вычислительных трактов после трассировки", "Report Table Caption")
     table_before(
-        doc,
-        anchor,
-        ["Ресурс", "Использовано", "Доля доступных ресурсов"],
+        doc, anchor,
+        ["Вариант", "Период, нс", "LUT", "Регистры", "WNS, нс", "Оценка Fmax, МГц"],
         [
-            ["Slice LUT", lut, "1,02 %"],
-            ["Slice Register", registers, "0,02 %"],
-            ["Slice", slices, "1,32 %"],
-            ["Bonded IOB", iob, "10,00 %"],
-            ["BUFGCTRL", bufg, "3,13 %"],
+            [label, n(c[key]["period_ns"]), str(used(c[key], "Slice LUTs")),
+             str(used(c[key], "Slice Registers")), n(c[key]["wns_ns"]),
+             n(1000 / (c[key]["period_ns"] - c[key]["wns_ns"]), 1)]
+            for key, label in (
+                ("baseline_20", "Исходный"),
+                ("pipeline_20", "С регистром"),
+                ("baseline_10", "Исходный"),
+                ("pipeline_10", "С регистром"),
+            )
         ],
-        [5.6, 3.5, 6.4],
+        [3.0, 2.2, 1.5, 2.2, 2.1, 4.5],
     )
     before(
         anchor,
-        "Ресурсы относятся к верхнему модулю с автоматом самопроверки и "
-        "встроенным контрольным набором; их нельзя напрямую сопоставлять "
-        "с оценкой отдельного классификатора после синтеза в разделе 8. "
-        "Память контрольных данных и весов оптимизирована в логические "
-        f"ресурсы; блоков BRAM использовано {bram}, блоков DSP — {dsp}.",
+        comparison + ten_ns +
+        "Оценка Fmax получена как 1000/(заданный период − WNS) по "
+        "критическому пути проложенной схемы; это аналитическая оценка "
+        "для данного прогона Vivado, а не измерение на плате. "
+        "Отрицательный WNS означает, что соответствующий заданный "
+        "период не выдержан. Оба варианта принимают один новый вектор "
+        "каждый такт, поэтому изменение скорости потока определяется "
+        "достижимым периодом. Задержка одного ответа у конвейера "
+        "увеличивается на один такт.",
         "Report Body",
     )
-    before(anchor, "Таблица 10.2 — Результаты трассировки и анализа таймингов", "Report Table Caption")
+    before(anchor, "Таблица 10.2 — Результаты прототипов с контрольной памятью", "Report Table Caption")
     table_before(
-        doc,
-        anchor,
-        ["Показатель", "Значение", "Смысл"],
+        doc, anchor,
+        ["Верхний модуль", "LUT", "Регистры", "Проложено цепей", "WNS при 20 нс"],
         [
-            ["Трассируемые / проложенные цепи", f"{routable} / {routed}", "Все трассируемые цепи проложены"],
-            ["Ошибки маршрутизации", routing_errors, "Ошибок нет"],
-            ["Период clk", "20,000 нс", "Расчётная цель 50 МГц"],
-            ["WNS / TNS", f"+{wns.replace('.', ',')} нс / 0 нс", "Нарушений setup нет"],
-            ["WHS / THS", f"+{whs.replace('.', ',')} нс / 0 нс", "Нарушений hold нет"],
+            ["fpga_top", str(used(proto, "Slice LUTs")), str(used(proto, "Slice Registers")),
+             f"{proto['routed_nets']}/{proto['routable_nets']}", n(proto["wns_ns"])],
+            ["fpga_top_pipelined", str(used(proto_pipe, "Slice LUTs")),
+             str(used(proto_pipe, "Slice Registers")),
+             f"{proto_pipe['routed_nets']}/{proto_pipe['routable_nets']}", n(proto_pipe["wns_ns"])],
         ],
-        [5.8, 3.0, 6.7],
+        [5.0, 1.6, 2.5, 3.4, 3.0],
     )
     before(
         anchor,
-        "Для внутренних синхронных путей ограничение 20 нс соблюдено: "
-        f"худший запас времени установки составляет +{wns.replace('.', ',')} нс, "
-        "суммарное нарушение равно нулю. Худший запас времени удержания "
-        f"составляет +{whs.replace('.', ',')} нс. Наиболее длинный путь идёт от регистра "
-        "индекса контрольного вектора к регистру решения классификатора; "
-        "его задержка данных составляет 14,675 нс, в том числе 9,371 нс "
-        "приходится на соединения. Оценка относится к данной реализации "
-        "и заданному периоду, а не к произвольной отладочной плате.",
+        "Оба прототипа полностью трассированы без ошибок маршрутизации. "
+        "Эти значения включают автомат и постоянную контрольную память. "
+        "Они характеризуют верхние модули, но не служат основанием "
+        "для вывода о скорости вычислительного ядра.",
         "Report Body",
     )
 
     before(anchor, "10.3 Границы проверки", "Report Heading 2")
+    rules = ", ".join(sorted(set(proto_pipe["drc_rules"])))
     before(
         anchor,
-        f"У {no_input_delay} входов и {no_output_delay} выходов не заданы "
-        "внешние задержки; приведённый вывод о выполнении таймингов "
-        "относится к внутренним синхронным путям. В отчёте DRC отмечены "
-        f"{drc_violations} нарушения: NSTD-1, UCIO-1 и CFGBVS-1. "
-        "Причина — отсутствие выбранной отладочной платы и сведений о "
-        "её распиновке, стандартах ввода-вывода и напряжении конфигурации. "
-        "Поэтому битовый поток не генерировался и проверка на плате не "
-        "проводилась. Подтверждены симуляция и физическая реализация "
-        "в Vivado для выбранного кристалла.",
+        f"Для прототипа не заданы внешние задержки у "
+        f"{proto_pipe['input_ports_without_delay']} входов и "
+        f"{proto_pipe['output_ports_without_delay']} выходов. "
+        f"Отчёт DRC содержит {rules}. Плата не выбрана, поэтому "
+        "не задавались физические выводы, стандарты ввода-вывода и "
+        "напряжение конфигурации. Битовый поток не создавался и "
+        "испытание на плате не проводилось. Подтверждены симуляция, "
+        "синтез и физическая реализация для указанного кристалла.",
         "Report Body",
     )
 
     replace_text(
         p[150],
-        "В практических работах № 1–3 построена программная модель "
-        "бинарного классификатора падений 5→8→1, разработана её "
-        "целочисленная RTL-реализация и создан прототип для ПЛИС. "
-        "Программная модель дала на тестовой выборке 97,0 % accuracy, "
-        "84,5 % precision и 93,6 % recall. RTL-классификатор совпал с "
-        "целочисленным эталоном на 2331 проверенном векторе. "
-        "Самопроверяющийся прототип успешно прошёл три сценария XSim "
-        "с набором из 64 векторов. В Vivado 2022.2 для Artix-7 "
-        "xc7a100tcsg324-1 выполнены размещение и трассировка: "
-        f"проложены все {routed} трассируемых цепей, ошибок маршрутизации "
-        f"нет, WNS при периоде 20 нс равен +{wns.replace('.', ',')} нс. "
-        "Результат подтверждает реализуемость вычислительного тракта "
-        "на выбранном кристалле. Назначение выводов, генерация битового "
-        "потока и испытание на плате не выполнялись.",
+        "Построены программная модель, целочисленный RTL-классификатор и "
+        "прототип на Artix-7. На 2331 эталонном векторе подтверждено "
+        "совпадение вычислений в поведенческой и функциональной "
+        "симуляции после синтеза. Верхний модуль проверил 64 контрольных "
+        "входа, обнаружение ошибки и повторный запуск. Размещение и "
+        "трассировка в Vivado 2022.2 завершены для исходного и "
+        "конвейерного вариантов. " + comparison +
+        "Оценка относится к внутренним синхронным путям; "
+        "назначение выводов и проверка на плате не выполнялись.",
     )
-
     source_anchor = p[161]
     before(
         source_anchor,
-        "10. AMD. Vivado Design Suite User Guide: Implementation (UG904), version 2022.2. — URL: https://docs.amd.com/r/2022.2-English/ug904-vivado-implementation/ (дата обращения: 03.10.2026).",
+        "10. AMD. Vivado Design Suite User Guide: Implementation (UG904), "
+        "version 2022.2. — URL: https://docs.amd.com/r/2022.2-English/ug904-vivado-implementation/ "
+        "(дата обращения: 28.10.2026).",
         "Report Source",
     )
 
     doc.add_paragraph("Приложение В", style="Report Appendix")
-    doc.add_paragraph("Код прототипа и ограничение тактового сигнала", style="Report Appendix Title")
+    doc.add_paragraph("Код прототипа и конвейерного варианта", style="Report Appendix Title")
     doc.add_paragraph(
-        "Приведены полные тексты верхнего модуля, его тестбенча и "
-        "временного ограничения. Комментарии опущены.",
+        "Приведены полные тексты модулей и тестбенчей, использованных "
+        "для функциональной проверки и сравнения. Комментарии опущены.",
         style="Report Body",
     )
-    for number, filename, title in (
-        ("В.1", "fpga_top.v", "Верхний модуль прототипа"),
-        ("В.2", "tb_fpga_top.v", "Тестбенч прототипа"),
-        ("В.3", "clock_only.xdc", "Ограничение тактового сигнала"),
-    ):
+    sources = (
+        ("В.1", "rtl/bnn_layer_a.v", "Слой A"),
+        ("В.2", "rtl/bnn_layer_b.v", "Слой B"),
+        ("В.3", "rtl/bnn_classifier_pipelined.v", "Конвейерный классификатор"),
+        ("В.4", "rtl/tb_bnn_classifier_pipelined.v", "Проверка конвейерного классификатора"),
+        ("В.5", "fpga/fpga_top.v", "Прототип"),
+        ("В.6", "fpga/tb_fpga_top.v", "Проверка прототипа"),
+        ("В.7", "fpga/fpga_top_pipelined.v", "Конвейерный прототип"),
+        ("В.8", "fpga/tb_fpga_top_pipelined.v", "Проверка конвейерного прототипа"),
+        ("В.9", "fpga/bnn_benchmark.v", "Сравниваемые верхние модули"),
+        ("В.10", "fpga/tb_bnn_benchmark.v", "Проверка сравниваемых верхних модулей"),
+        ("В.11", "fpga/clock_only.xdc", "Ограничение тактового сигнала"),
+    )
+    for number, filename, title in sources:
         doc.add_paragraph(f"Листинг {number} — {title}", style="Report Listing Caption")
         paragraph = doc.add_paragraph(style="Report Code")
-        run = paragraph.add_run(source_without_comments(filename))
-        run.font.size = Pt(9)
+        paragraph.add_run(source_without_comments(filename)).font.size = Pt(9)
 
     doc.save(OUTPUT)
     print(OUTPUT)

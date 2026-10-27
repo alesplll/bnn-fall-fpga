@@ -10,6 +10,7 @@ from docx.enum.text import WD_ALIGN_PARAGRAPH
 from docx.oxml import OxmlElement
 from docx.oxml.ns import qn
 from docx.shared import Cm, Pt
+from read_vivado_results import parse
 
 
 ROOT = Path(__file__).resolve().parent
@@ -17,6 +18,7 @@ SOURCE = ROOT / "source_pr1.docx"
 OUTPUT = ROOT / "Отчет_ПР1_ПР2_Рябец_Головин_Гришин.docx"
 SCREENSHOTS = ROOT / "screenshots"
 RTL = ROOT.parent / "rtl"
+RESULTS = ROOT / "evidence" / "pr23"
 
 
 def replace_text(paragraph, value: str) -> None:
@@ -88,6 +90,12 @@ def verilog_without_comments(filename: str) -> str:
 
 
 def main() -> None:
+    measured = parse(RESULTS)
+    pr2 = measured["cases"]["pr2_classifier"]["synthesis"]
+    pr2_lut = pr2["Slice LUTs"]["used"]
+    pr2_ff = pr2["Slice Registers"]["used"]
+    pr2_iob = pr2["Bonded IOB"]["used"]
+    pr2_bufg = pr2["BUFGCTRL"]["used"]
     doc = Document(SOURCE)
     p = doc.paragraphs
 
@@ -198,7 +206,7 @@ def main() -> None:
                   ["fall_detected", "1", "1 — падение, 0 — обычная активность"]],
                  [3.5, 2.7, 9.3])
     after_table = before(anchor,
-           "Проект bnn_pr2 создан в Vivado 2022.2 для кристалла Xilinx "
+           "Единый проект ПР2–ПР3 создан в Vivado 2022.2 для кристалла Xilinx "
            "Artix-7 xc7a100tcsg324-1. В его состав входят RTL-модуль, "
            "тестбенч и файлы памяти с параметрами и тестовыми данными "
            "(рисунки 6.1 и 6.2).", "Report Body")
@@ -261,15 +269,16 @@ def main() -> None:
            "эквивалентность RTL целочисленному эталону на проверенных входах.", "Report Body")
     after_table.paragraph_format.space_before = Pt(6)
     before(anchor,
-           "В Vivado 2022.2 создан проект bnn_pr2 для xc7a100tcsg324-1. "
+           "В Vivado 2022.2 создан проект для xc7a100tcsg324-1. "
            "Поведенческая симуляция XSim завершилась сообщением "
            "PASS: 2331 vectors (рисунок 8.1). Временные диаграммы показаны "
            "на рисунке 8.2. Синтез успешно завершился; получена логическая "
-           "схема из 960 ячеек (рисунок 8.3). Согласно отчёту ресурсов "
+           "схема классификатора (рисунок 8.3). Согласно отчёту ресурсов "
            "(рисунок 8.4), "
-           "использовано 629 Slice LUT, 2 Slice Register, 45 Bonded IOB "
-           "и 1 BUFGCTRL. Оценка ресурсов относится только к синтезу; "
-           "размещение, трассировка и анализ таймингов не выполнялись.", "Report Body")
+           f"использовано {pr2_lut} Slice LUT, {pr2_ff} Slice Register, "
+           f"{pr2_iob} Bonded IOB и {pr2_bufg} BUFGCTRL. "
+           "Эти показатели относятся к отдельному ядру после синтеза. "
+           "Размещение и сравнение вариантов выполнены в ПР3.", "Report Body")
     evidence_figure_before(anchor, "vivado_simulation_pass.jpg", "Рисунок 8.1 — Результат проверки 2331 эталонного вектора в XSim")
     evidence_figure_before(anchor, "vivado_waveform.jpg", "Рисунок 8.2 — Временные диаграммы входов и выходов классификатора")
     evidence_figure_before(anchor, "vivado_synthesized_schematic.jpg", "Рисунок 8.3 — Синтезированная логическая схема классификатора")
