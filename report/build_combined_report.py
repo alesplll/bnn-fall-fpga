@@ -209,10 +209,9 @@ def main() -> None:
            "Единый проект ПР2–ПР3 создан в Vivado 2022.2 для кристалла Xilinx "
            "Artix-7 xc7a100tcsg324-1. В его состав входят RTL-модуль, "
            "тестбенч и файлы памяти с параметрами и тестовыми данными "
-           "(рисунки 6.1 и 6.2).", "Report Body")
+           "(рисунок 6.1).", "Report Body")
     after_table.paragraph_format.space_before = Pt(6)
-    evidence_figure_before(anchor, "vivado_project.jpg", "Рисунок 6.1 — Проект RTL-модели в Vivado 2022.2")
-    evidence_figure_before(anchor, "vivado_rtl_code_interface.jpg", "Рисунок 6.2 — Интерфейс и загрузка параметров в коде Verilog")
+    evidence_figure_before(anchor, "vivado_pr23_project.jpg", "Рисунок 6.1 — Единый проект в Vivado 2022.2")
 
     before(anchor, "7 РЕАЛИЗАЦИЯ RTL-МОДЕЛИ", "Report Heading 1")
     before(anchor, "7.1 Слой A: знаковое умножение и накопление", "Report Heading 2")
@@ -271,18 +270,22 @@ def main() -> None:
     before(anchor,
            "В Vivado 2022.2 создан проект для xc7a100tcsg324-1. "
            "Поведенческая симуляция XSim завершилась сообщением "
-           "PASS: 2331 vectors (рисунок 8.1). Временные диаграммы показаны "
-           "на рисунке 8.2. Синтез успешно завершился; получена логическая "
-           "схема классификатора (рисунок 8.3). Согласно отчёту ресурсов "
-           "(рисунок 8.4), "
+           "PASS: 2331 vectors (рисунок 8.1). Синтез успешно завершился; "
+           "получена логическая схема классификатора (рисунок 8.2). "
+           "Согласно отчёту ресурсов, "
            f"использовано {pr2_lut} Slice LUT, {pr2_ff} Slice Register, "
            f"{pr2_iob} Bonded IOB и {pr2_bufg} BUFGCTRL. "
            "Эти показатели относятся к отдельному ядру после синтеза. "
            "Размещение и сравнение вариантов выполнены в ПР3.", "Report Body")
-    evidence_figure_before(anchor, "vivado_simulation_pass.jpg", "Рисунок 8.1 — Результат проверки 2331 эталонного вектора в XSim")
-    evidence_figure_before(anchor, "vivado_waveform.jpg", "Рисунок 8.2 — Временные диаграммы входов и выходов классификатора")
-    evidence_figure_before(anchor, "vivado_synthesized_schematic.jpg", "Рисунок 8.3 — Синтезированная логическая схема классификатора")
-    evidence_figure_before(anchor, "vivado_utilization.jpg", "Рисунок 8.4 — Фрагмент схемы и ресурсы после синтеза")
+    before(anchor, "Таблица 8.2 — Ресурсы отдельного классификатора после синтеза", "Report Table Caption")
+    table_before(doc, anchor, ["Ресурс", "Количество"], [
+        ["Slice LUT", str(pr2_lut)],
+        ["Slice Register", str(pr2_ff)],
+        ["Bonded IOB", str(pr2_iob)],
+        ["BUFGCTRL", str(pr2_bufg)],
+    ], [8.0, 7.5])
+    evidence_figure_before(anchor, "vivado_pr23_pr2_pass.jpg", "Рисунок 8.1 — Проверка 2331 эталонного вектора в XSim")
+    evidence_figure_before(anchor, "vivado_pr23_pr2_schematic.jpg", "Рисунок 8.2 — Синтезированная схема классификатора")
 
     replace_text(
         p[110],
