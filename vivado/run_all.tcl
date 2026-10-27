@@ -88,6 +88,7 @@ proc build_case {case_name top period route netlist_simset} {
     close $fd
     open_run synth_1
     report_utilization -file [file join $out_dir utilization_synth.rpt]
+    write_checkpoint -force [file join $out_dir synth.dcp]
     catch {close_design}
 
     if {$netlist_simset ne ""} {
