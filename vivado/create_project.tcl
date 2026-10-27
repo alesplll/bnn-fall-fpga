@@ -6,13 +6,6 @@ set project_file [file join $project_dir bnn_pr23.xpr]
 set part xc7a100tcsg324-1
 set clock_file [file join $project_dir clock_run.xdc]
 
-file mkdir $project_dir
-if {![file exists $clock_file]} {
-    set fd [open $clock_file w]
-    puts $fd {create_clock -name clk -period 20.000 [get_ports clk]}
-    close $fd
-}
-
 catch {close_sim}
 catch {close_project}
 if {[file exists $project_file]} {
@@ -20,10 +13,16 @@ if {[file exists $project_file]} {
 } else {
     create_project bnn_pr23 $project_dir -part $part
 }
+if {![file exists $clock_file]} {
+    set fd [open $clock_file w]
+    puts $fd {create_clock -name clk -period 20.000 [get_ports clk]}
+    close $fd
+}
 if {[get_property PART [current_project]] ne $part} {
     error "Project part must be $part"
 }
 set_property target_language Verilog [current_project]
+set_property target_simulator XSim [current_project]
 
 set design_files [list \
     [file join $repo_root rtl bnn_classifier.v] \
