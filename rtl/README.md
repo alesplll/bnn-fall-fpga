@@ -18,9 +18,11 @@
 бит слоя A и числовой результат слоя B. Ожидаемый выход — результат
 целочисленной программной модели, а не исходная метка датасета.
 
-Конвейерный вариант состоит из [`bnn_layer_a.v`](bnn_layer_a.v),
-[`bnn_layer_b.v`](bnn_layer_b.v) и
-[`bnn_classifier_pipelined.v`](bnn_classifier_pipelined.v). Между слоями
+Для сравнения оба варианта собраны из [`bnn_layer_a.v`](bnn_layer_a.v)
+и [`bnn_layer_b.v`](bnn_layer_b.v). В
+[`bnn_classifier_modular.v`](bnn_classifier_modular.v) они соединены
+без регистра, в [`bnn_classifier_pipelined.v`](bnn_classifier_pipelined.v)
+между слоями
 на фронте такта сохраняются восемь бит и сигнал достоверности. Оба
 варианта принимают один вектор каждый такт; конвейер добавляет один
 такт задержки отдельного ответа. Тестбенч проверяет 2331 вектор и

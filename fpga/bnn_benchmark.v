@@ -33,7 +33,7 @@ module bnn_benchmark_shell #(
                 .valid_out(valid_out), .fall_detected(fall_detected)
             );
         end else begin : without_register
-            bnn_classifier classifier (
+            bnn_classifier_modular classifier (
                 .clk(clk), .rst_n(rst_n), .valid_in(valid_q),
                 .input_features(input_q),
                 .valid_out(valid_out), .fall_detected(fall_detected)

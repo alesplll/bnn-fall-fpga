@@ -28,6 +28,7 @@ set design_files [list \
     [file join $repo_root rtl bnn_classifier.v] \
     [file join $repo_root rtl bnn_layer_a.v] \
     [file join $repo_root rtl bnn_layer_b.v] \
+    [file join $repo_root rtl bnn_classifier_modular.v] \
     [file join $repo_root rtl bnn_classifier_pipelined.v] \
     [file join $repo_root fpga fpga_top.v] \
     [file join $repo_root fpga fpga_top_pipelined.v] \

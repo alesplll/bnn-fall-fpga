@@ -4,6 +4,8 @@
 module tb_bnn_benchmark;
 `ifdef FULL_TEST
     localparam VECTOR_COUNT = 2331;
+`elsif EDGE_TEST
+    localparam VECTOR_COUNT = 14;
 `else
     localparam VECTOR_COUNT = 64;
 `endif
@@ -38,6 +40,9 @@ module tb_bnn_benchmark;
 `ifdef FULL_TEST
         $readmemh("tb_inputs_full.mem", vectors);
         $readmemh("tb_expected_full.mem", expected);
+`elsif EDGE_TEST
+        $readmemh("tb_inputs_edge.mem", vectors);
+        $readmemh("tb_expected_edge.mem", expected);
 `else
         $readmemh("tb_inputs_64.mem", vectors);
         $readmemh("tb_expected_64.mem", expected);
