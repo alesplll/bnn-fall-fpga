@@ -129,6 +129,9 @@ proc build_case {case_name top period route netlist_simset} {
     puts $fd "actual_period_ns=$actual_period"
     puts $fd "worst_setup_slack_ns=$slack"
     close $fd
+    if {$slack < 0} {
+        puts "TIMING_NOT_MET: $case_name period=$actual_period WNS=$slack"
+    }
     puts "BUILD_DONE: $case_name period=$actual_period WNS=$slack"
 }
 
