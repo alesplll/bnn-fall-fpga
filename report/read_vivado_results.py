@@ -37,7 +37,7 @@ def get(text: str, pattern: str, label: str) -> str:
     return match.group(1)
 
 
-def resources(path: Path) -> dict[str, dict[str, float]]:
+def resources(path: Path, routed: bool = False) -> dict[str, dict[str, float]]:
     text = path.read_text(encoding="utf-8", errors="replace")
     result = {}
     for name in RESOURCE_NAMES:
@@ -45,6 +45,8 @@ def resources(path: Path) -> dict[str, dict[str, float]]:
         match = re.search(pattern, text, re.MULTILINE)
         if match:
             result[name] = {"used": int(match.group(1)), "percent": float(match.group(2))}
+        elif name == "Slice" and not routed:
+            continue
         elif name in ("Block RAM Tile", "DSPs"):
             result[name] = {"used": 0, "percent": 0.0}
         else:
@@ -74,7 +76,7 @@ def parse(root: Path) -> dict:
         if name in ROUTED:
             if "Complete" not in result.get("implementation_status", ""):
                 raise ValueError(f"Implementation not complete: {name}")
-            item["routed"] = resources(folder / "utilization_routed.rpt")
+            item["routed"] = resources(folder / "utilization_routed.rpt", routed=True)
             item["period_ns"] = float(result["actual_period_ns"])
             item["wns_ns"] = float(result["worst_setup_slack_ns"])
             route = (folder / "route_status.rpt").read_text(encoding="utf-8", errors="replace")
