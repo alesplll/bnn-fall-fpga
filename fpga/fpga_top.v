@@ -20,7 +20,7 @@ module fpga_top (
     reg [1:0] state;
     reg [5:0] vector_index;
     reg [39:0] vectors [0:63];
-    reg expected [0:63];
+    reg [0:0] expected [0:63];
 
     initial begin
         $readmemh("tb_inputs_64.mem", vectors);
@@ -32,7 +32,7 @@ module fpga_top (
     wire valid_out;
     wire fall_detected;
     wire mismatch = (valid_out != 1'b1) ||
-                    (fall_detected != expected[vector_index]);
+                    (fall_detected != expected[vector_index][0]);
 
     bnn_classifier classifier (
         .clk(clk),

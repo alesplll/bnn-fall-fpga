@@ -8,6 +8,8 @@ venv/
 vivado_pr2/
 vivado_pr3/
 vivado_pr3_pipeline/
+vivado_pr23/
+.DS_Store
 vivado_pr3.log
 vivado_pr3.jou
 *.vcd

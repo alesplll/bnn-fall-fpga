@@ -65,32 +65,32 @@ module tb_bnn_classifier_pipelined;
             @(posedge clk);
             #1;
 `ifdef FULL_TEST
-            if (i >= 1 && i - 1 < VECTOR_COUNT) begin
-                if (dut.hidden_q !== expected_hidden[i-1]) begin
-                    $display("FAIL hidden %0d", i-1);
+            if (i < VECTOR_COUNT) begin
+                if (dut.hidden_q !== expected_hidden[i]) begin
+                    $display("FAIL hidden %0d", i);
                     errors = errors + 1;
                 end
-                if (dut.score !== $signed(expected_score[i-1])) begin
-                    $display("FAIL score %0d", i-1);
+                if (dut.score !== $signed(expected_score[i])) begin
+                    $display("FAIL score %0d", i);
                     errors = errors + 1;
                 end
             end
 `elsif EDGE_TEST
-            if (i >= 1 && i - 1 < VECTOR_COUNT) begin
-                if (dut.hidden_q !== expected_hidden[i-1]) begin
-                    $display("FAIL hidden %0d", i-1);
+            if (i < VECTOR_COUNT) begin
+                if (dut.hidden_q !== expected_hidden[i]) begin
+                    $display("FAIL hidden %0d", i);
                     errors = errors + 1;
                 end
-                if (dut.score !== $signed(expected_score[i-1])) begin
-                    $display("FAIL score %0d", i-1);
+                if (dut.score !== $signed(expected_score[i])) begin
+                    $display("FAIL score %0d", i);
                     errors = errors + 1;
                 end
             end
 `endif
-            if (i >= 2) begin
-                if (valid_out !== 1'b1 || fall_detected !== expected[i-2]) begin
+            if (i >= 1 && i - 1 < VECTOR_COUNT) begin
+                if (valid_out !== 1'b1 || fall_detected !== expected[i-1]) begin
                     $display("FAIL output %0d: valid=%b got=%b expected=%b",
-                             i-2, valid_out, fall_detected, expected[i-2]);
+                             i-1, valid_out, fall_detected, expected[i-1]);
                     errors = errors + 1;
                 end
             end else if (valid_out !== 1'b0) begin

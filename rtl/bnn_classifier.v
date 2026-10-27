@@ -21,7 +21,7 @@ module bnn_classifier #(
     // hidden neuron h. Two's-complement bytes and biases are signed.
     reg [7:0]  w_a [0:39];
     reg [31:0] b_a [0:7];
-    reg        w_b [0:7];
+    reg [0:0]  w_b [0:7];
     reg [31:0] b_b [0:0];
 
     initial begin
@@ -62,7 +62,7 @@ module bnn_classifier #(
         end
 
         for (h = 0; h < 8; h = h + 1)
-            matching_bits = matching_bits + (hidden_bits[h] ~^ w_b[h]);
+            matching_bits = matching_bits + (hidden_bits[h] ~^ w_b[h][0]);
 
         // dot({-1,+1}^8) = 2*popcount(XNOR) - 8.
         score = ($signed({28'b0, matching_bits}) <<< 1)

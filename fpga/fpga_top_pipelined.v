@@ -1,6 +1,6 @@
 `timescale 1ns / 1ps
 
-// Separate experiment; the completed PR3 fpga_top remains unchanged.
+// Streaming version of the FPGA self-test for the pipelined classifier.
 module fpga_top_pipelined (
     input  wire       clk,
     input  wire       rst_n,
@@ -20,9 +20,8 @@ module fpga_top_pipelined (
     reg [5:0] send_index;
     reg [5:0] check_index_q0;
     reg [5:0] check_index_q1;
-    reg [5:0] check_index_q2;
     reg [39:0] vectors [0:63];
-    reg expected [0:63];
+    reg [0:0] expected [0:63];
 
     initial begin
         $readmemh("tb_inputs_64.mem", vectors);
@@ -33,7 +32,7 @@ module fpga_top_pipelined (
     wire valid_in = (state == SEND);
     wire valid_out;
     wire fall_detected;
-    wire mismatch = (fall_detected != expected[check_index_q2]);
+    wire mismatch = (fall_detected != expected[check_index_q1][0]);
 
     bnn_classifier_pipelined classifier (
         .clk(clk),
@@ -50,7 +49,6 @@ module fpga_top_pipelined (
             send_index <= 6'd0;
             check_index_q0 <= 6'd0;
             check_index_q1 <= 6'd0;
-            check_index_q2 <= 6'd0;
             busy <= 1'b0;
             done <= 1'b0;
             pass <= 1'b0;
@@ -60,7 +58,6 @@ module fpga_top_pipelined (
         end else begin
             check_index_q0 <= send_index;
             check_index_q1 <= check_index_q0;
-            check_index_q2 <= check_index_q1;
             case (state)
                 IDLE: begin
                     if (start) begin
