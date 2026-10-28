@@ -76,7 +76,8 @@ foreach spec $sim_specs {
     foreach define $defines {
         append xvlog_options " -d $define"
     }
-    set_property xsim.compile.xvlog.more_options [string trim $xvlog_options] [get_filesets $name]
+    set_property -name {xsim.compile.xvlog.more_options} \
+        -value [string trim $xvlog_options] -objects [get_filesets $name]
     set_property xsim.simulate.runtime $runtime [get_filesets $name]
     update_compile_order -fileset $name
 }
