@@ -70,7 +70,13 @@ foreach spec $sim_specs {
         add_files -fileset $name [list $tb_file]
     }
     set_property top $top [get_filesets $name]
-    set_property verilog_define $defines [get_filesets $name]
+    # Pass testbench macros explicitly to xvlog: the previous sim_pr2 run
+    # used its 64-vector default despite the fileset's verilog_define value.
+    set xvlog_options ""
+    foreach define $defines {
+        append xvlog_options " -d $define"
+    }
+    set_property xsim.compile.xvlog.more_options [string trim $xvlog_options] [get_filesets $name]
     set_property xsim.simulate.runtime $runtime [get_filesets $name]
     update_compile_order -fileset $name
 }

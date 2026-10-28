@@ -19,6 +19,8 @@ file mkdir $results_dir
 proc assert_pass {simset mode marker} {
     global project_dir results_dir
     catch {close_sim}
+    current_fileset -simset $simset
+    puts "SIM_CONFIG: $simset xvlog=[get_property xsim.compile.xvlog.more_options [get_filesets $simset]] runtime=[get_property xsim.simulate.runtime [get_filesets $simset]]"
     if {$mode eq "behavioral"} {
         launch_simulation -simset $simset -mode behavioral
         set phase behav
