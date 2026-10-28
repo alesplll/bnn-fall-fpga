@@ -39,9 +39,8 @@ def to_hex_twos_complement(value: int, n_bits: int) -> str:
     return format(int(value) & mask, f"0{n_bits // 4}x")
 
 
-def write_mem(path: Path, lines: list[str], header: str) -> None:
+def write_mem(path: Path, lines: list[str]) -> None:
     with open(path, "w") as f:
-        f.write(f"// {header}\n")
         for line in lines:
             f.write(line + "\n")
 
@@ -85,26 +84,20 @@ def main() -> None:
         input_lines.append(byte_str)
         expected_lines.append(format(int(label[i]), "01x"))
 
-    write_mem(WEIGHTS / "tb_inputs_64.mem", input_lines,
-              "64 golden-теста, каждая строка = 5 x int8 (X0..X4), 40 бит, hex, big-endian по индексу признака")
-    write_mem(WEIGHTS / "tb_expected_64.mem", expected_lines,
-              "Ожидаемая метка (0/1) для соответствующей строки tb_inputs_64.mem")
+    write_mem(WEIGHTS / "tb_inputs_64.mem", input_lines)
+    write_mem(WEIGHTS / "tb_expected_64.mem", expected_lines)
 
     W_A_lines = [to_hex_twos_complement(int(gw.W_A_i8[j, h]), 8)
                  for j in range(gw.n_in) for h in range(gw.n_hidden)]
-    write_mem(WEIGHTS / "weights_layerA_W.mem", W_A_lines,
-              f"W_A int8, порядок: j=0..{gw.n_in - 1} (внешний), h=0..{gw.n_hidden - 1} (внутренний). "
-              f"{gw.n_in * gw.n_hidden} строк")
+    write_mem(WEIGHTS / "weights_layerA_W.mem", W_A_lines)
 
     b_A_lines = [to_hex_twos_complement(int(v), 32) for v in gw.b_A_i32]
-    write_mem(WEIGHTS / "weights_layerA_b.mem", b_A_lines, "b_A int32, по одному на нейрон h=0..H-1")
+    write_mem(WEIGHTS / "weights_layerA_b.mem", b_A_lines)
 
     W_B_lines = [format(int(v), "01x") for v in gw.W_B_bit]
-    write_mem(WEIGHTS / "weights_layerB_W.mem", W_B_lines,
-              "W_B бит: 1 <=> вес +1, 0 <=> вес -1, по одному на нейрон h=0..H-1")
+    write_mem(WEIGHTS / "weights_layerB_W.mem", W_B_lines)
 
-    write_mem(WEIGHTS / "weights_layerB_b.mem", [to_hex_twos_complement(gw.b_B_i32, 32)],
-              "b_B int32 (порог слоя-классификатора)")
+    write_mem(WEIGHTS / "weights_layerB_b.mem", [to_hex_twos_complement(gw.b_B_i32, 32)])
 
     in_scale_lines = [f"{s:.10f}" for s in gw.in_scale]
     (WEIGHTS / "input_scale.txt").write_text(

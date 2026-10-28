@@ -5,6 +5,15 @@ source [file join $repo_root vivado create_project.tcl]
 set project_dir [file join $repo_root vivado_pr23]
 set results_dir [file join $project_dir results]
 set clock_file [file join $project_dir clock_run.xdc]
+# Keep an earlier package, while ensuring this package contains one run only.
+if {[file exists $results_dir]} {
+    set backup_dir [file join $project_dir "results_backup_[clock format [clock seconds] -format %Y%m%d_%H%M%S]"]
+    if {[file exists $backup_dir]} {
+        error "Cannot preserve prior results: $backup_dir already exists"
+    }
+    file rename $results_dir $backup_dir
+    puts "PR23_PREVIOUS_RESULTS: $backup_dir"
+}
 file mkdir $results_dir
 
 proc assert_pass {simset mode marker} {

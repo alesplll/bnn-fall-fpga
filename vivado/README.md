@@ -26,6 +26,13 @@ source vivado/run_all.tcl
 добавляются `implementation.log`, `utilization_routed.rpt`,
 `timing_routed.rpt`, `critical_paths.rpt`, `route_status.rpt`,
 `drc_routed.rpt`, `routed.dcp` и краткий `result.txt`.
+При повторном запуске предыдущая папка `results` сохраняется рядом под
+именем `results_backup_...`, а новая собирается с нуля.
+
+Сценарий последовательно меняет верхний модуль одного проекта. Поэтому
+после завершения в Vivado активен последний вариант. Схему и размещение
+другого варианта можно посмотреть в его сохранённом `synth.dcp` или
+`routed.dcp`; отчёты каждого варианта находятся рядом с этими файлами.
 
 Для завершения отчёта передайте **всю папку `vivado_pr23/results/` одним
 ZIP-архивом** и скрин Tcl Console со строкой `PR23_DONE`. При ошибке
