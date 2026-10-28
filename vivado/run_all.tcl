@@ -45,10 +45,13 @@ proc assert_pass {simset mode marker} {
     puts "SIM_PASS: $simset $mode"
 }
 
-proc require_mem_reads {log_file names} {
+proc require_mem_reads {log_file names expected_top} {
     set fd [open $log_file r]
     set log_text [read $fd]
     close $fd
+    if {[string first "Command: synth_design -top $expected_top " $log_text] < 0} {
+        error "Synthesis log does not confirm top $expected_top: $log_file"
+    }
     if {[regexp {Command: read_checkpoint.*-incremental} $log_text]} {
         error "Synthesis reused an incremental checkpoint; see $log_file"
     }
@@ -93,7 +96,7 @@ proc build_case {case_name top period route netlist_simset} {
     if {[string match "fpga_top*" $top]} {
         lappend mem_names tb_inputs_64.mem tb_expected_64.mem
     }
-    require_mem_reads $synth_log $mem_names
+    require_mem_reads $synth_log $mem_names $top
     file copy -force $synth_log [file join $out_dir synth.log]
     set fd [open [file join $out_dir result.txt] w]
     puts $fd "top=$top"
@@ -103,14 +106,31 @@ proc build_case {case_name top period route netlist_simset} {
     open_run synth_1
     report_utilization -file [file join $out_dir utilization_synth.rpt]
     write_checkpoint -force [file join $out_dir synth.dcp]
-    catch {close_design}
 
     if {$netlist_simset ne ""} {
+        # Keep this synthesis design active while Vivado generates its
+        # functional netlist. The preceding case may have a different top.
+        reset_simulation -mode post-synthesis -type functional $netlist_simset
         set marker [expr {[string match "*pipeline*" $netlist_simset] ?
             "PASS: benchmark pipelined, 2331 vectors" :
             "PASS: benchmark baseline, 2331 vectors"}]
-        assert_pass $netlist_simset post-synthesis $marker
+        set sim_failed [catch {assert_pass $netlist_simset post-synthesis $marker} sim_message]
+        set sim_top [get_property TOP [get_filesets $netlist_simset]]
+        set netlist_file [file join $project_dir bnn_pr23.sim $netlist_simset synth func xsim "${sim_top}_func_synth.v"]
+        if {![file exists $netlist_file]} {
+            error "Functional netlist not found: $netlist_file"
+        }
+        set fd [open $netlist_file r]
+        set netlist_text [read $fd]
+        close $fd
+        if {[string first "module $top" $netlist_text] < 0} {
+            error "Functional netlist for $case_name does not contain top $top: $netlist_file"
+        }
+        if {$sim_failed} {
+            error $sim_message
+        }
     }
+    catch {close_design}
     if {!$route} {
         puts "BUILD_DONE: $case_name (synthesis)"
         return

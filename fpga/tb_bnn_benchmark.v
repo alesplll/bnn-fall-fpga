@@ -1,7 +1,11 @@
 `timescale 1ns / 1ps
 
 // Port-only testbench also works with a synthesized functional netlist.
-module tb_bnn_benchmark;
+`ifdef PIPELINED
+module tb_bnn_benchmark_pipeline;
+`else
+module tb_bnn_benchmark_baseline;
+`endif
 `ifdef FULL_TEST
     localparam VECTOR_COUNT = 2331;
 `elsif EDGE_TEST

@@ -68,8 +68,8 @@ set sim_specs [list \
     [list sim_pr3 tb_fpga_top [file join $repo_root fpga tb_fpga_top.v] {} {6 us}] \
     [list sim_pipeline tb_bnn_classifier_pipelined [file join $repo_root rtl tb_bnn_classifier_pipelined.v] FULL_TEST {30 us}] \
     [list sim_pr3_pipeline tb_fpga_top_pipelined [file join $repo_root fpga tb_fpga_top_pipelined.v] {} {6 us}] \
-    [list sim_benchmark_baseline tb_bnn_benchmark [file join $repo_root fpga tb_bnn_benchmark.v] FULL_TEST {30 us}] \
-    [list sim_benchmark_pipeline tb_bnn_benchmark [file join $repo_root fpga tb_bnn_benchmark.v] {FULL_TEST PIPELINED} {30 us}]]
+    [list sim_benchmark_baseline tb_bnn_benchmark_baseline [file join $repo_root fpga tb_bnn_benchmark.v] FULL_TEST {30 us}] \
+    [list sim_benchmark_pipeline tb_bnn_benchmark_pipeline [file join $repo_root fpga tb_bnn_benchmark.v] {FULL_TEST PIPELINED} {30 us}]]
 foreach spec $sim_specs {
     lassign $spec name top tb_file defines runtime
     if {[llength [get_filesets -quiet $name]] == 0} {
