@@ -69,11 +69,20 @@ set sim_specs [list \
     [list sim_pipeline tb_bnn_classifier_pipelined [file join $repo_root rtl tb_bnn_classifier_pipelined.v] FULL_TEST {30 us}] \
     [list sim_pr3_pipeline tb_fpga_top_pipelined [file join $repo_root fpga tb_fpga_top_pipelined.v] {} {6 us}] \
     [list sim_benchmark_baseline tb_bnn_benchmark_baseline [file join $repo_root fpga tb_bnn_benchmark.v] FULL_TEST {30 us}] \
-    [list sim_benchmark_pipeline tb_bnn_benchmark_pipeline [file join $repo_root fpga tb_bnn_benchmark.v] {FULL_TEST PIPELINED} {30 us}]]
+    [list sim_benchmark_pipeline tb_bnn_benchmark_pipeline [file join $repo_root fpga tb_bnn_benchmark_pipeline.v] FULL_TEST {30 us}]]
 foreach spec $sim_specs {
     lassign $spec name top tb_file defines runtime
     if {[llength [get_filesets -quiet $name]] == 0} {
         create_fileset -simset $name
+    }
+    # An existing Windows project may still have the former shared
+    # benchmark testbench in the pipeline simulation fileset.
+    if {$name eq "sim_benchmark_pipeline"} {
+        foreach old_file [get_files -quiet -of_objects [get_filesets $name]] {
+            if {[file tail $old_file] eq "tb_bnn_benchmark.v"} {
+                remove_files -fileset $name [list $old_file]
+            }
+        }
     }
     if {[lsearch -exact [get_files -quiet -of_objects [get_filesets $name]] $tb_file] < 0} {
         add_files -fileset $name [list $tb_file]
@@ -89,6 +98,9 @@ foreach spec $sim_specs {
         -value [string trim $xvlog_options] -objects [get_filesets $name]
     set_property xsim.simulate.runtime $runtime [get_filesets $name]
     update_compile_order -fileset $name
+    if {[get_property top [get_filesets $name]] ne $top} {
+        error "Simulation top for $name must be $top"
+    }
 }
 
 set_property top fpga_top_pipelined [get_filesets sources_1]

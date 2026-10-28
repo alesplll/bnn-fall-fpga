@@ -1,11 +1,7 @@
 `timescale 1ns / 1ps
 
 // Port-only testbench also works with a synthesized functional netlist.
-`ifdef PIPELINED
-module tb_bnn_benchmark_pipeline;
-`else
 module tb_bnn_benchmark_baseline;
-`endif
 `ifdef FULL_TEST
     localparam VECTOR_COUNT = 2331;
 `elsif EDGE_TEST
@@ -13,11 +9,7 @@ module tb_bnn_benchmark_baseline;
 `else
     localparam VECTOR_COUNT = 64;
 `endif
-`ifdef PIPELINED
-    localparam LATENCY = 2;
-`else
     localparam LATENCY = 1;
-`endif
 
     reg clk = 1'b0;
     always #5 clk = ~clk;
@@ -30,11 +22,7 @@ module tb_bnn_benchmark_baseline;
     reg [0:0] expected [0:VECTOR_COUNT-1];
     integer i;
 
-`ifdef PIPELINED
-    bnn_benchmark_pipelined dut (
-`else
     bnn_benchmark_baseline dut (
-`endif
         .clk(clk), .rst_n(rst_n), .valid_in(valid_in),
         .input_features(input_features),
         .valid_out(valid_out), .fall_detected(fall_detected)
@@ -71,11 +59,7 @@ module tb_bnn_benchmark_baseline;
                 $fatal(1, "unexpected valid_out at cycle %0d", i);
             end
         end
-`ifdef PIPELINED
-        $display("PASS: benchmark pipelined, %0d vectors", VECTOR_COUNT);
-`else
         $display("PASS: benchmark baseline, %0d vectors", VECTOR_COUNT);
-`endif
         $finish;
     end
 endmodule
