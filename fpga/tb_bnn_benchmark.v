@@ -47,7 +47,9 @@ module tb_bnn_benchmark;
         $readmemh("tb_inputs_64.mem", vectors);
         $readmemh("tb_expected_64.mem", expected);
 `endif
-        repeat (2) @(negedge clk);
+        // Post-synthesis XSim holds all flip-flops in global reset for 100 ns.
+        // Keep the local reset asserted until that interval has passed.
+        repeat (12) @(negedge clk);
         rst_n = 1'b1;
         for (i = 0; i < VECTOR_COUNT + LATENCY + 1; i = i + 1) begin
             @(negedge clk);
