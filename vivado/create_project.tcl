@@ -24,6 +24,15 @@ if {[get_property PART [current_project]] ne $part} {
 set_property target_language Verilog [current_project]
 set_property target_simulator XSim [current_project]
 
+# This project switches synthesis tops between runs. Do not reuse a DCP
+# from a different top as an incremental synthesis/implementation reference.
+foreach run_name {synth_1 impl_1} {
+    set run [get_runs $run_name]
+    set_property AUTO_INCREMENTAL_CHECKPOINT 0 $run
+    set_property INCREMENTAL_CHECKPOINT {} $run
+}
+set_property STEPS.SYNTH_DESIGN.ARGS.INCREMENTAL_MODE off [get_runs synth_1]
+
 set design_files [list \
     [file join $repo_root rtl bnn_classifier.v] \
     [file join $repo_root rtl bnn_layer_a.v] \

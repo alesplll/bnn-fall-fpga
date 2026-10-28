@@ -49,6 +49,9 @@ proc require_mem_reads {log_file names} {
     set fd [open $log_file r]
     set log_text [read $fd]
     close $fd
+    if {[regexp {Command: read_checkpoint.*-incremental} $log_text]} {
+        error "Synthesis reused an incremental checkpoint; see $log_file"
+    }
     foreach name $names {
         if {[string first "data file '$name' is read successfully" $log_text] < 0} {
             error "Synthesis did not confirm reading $name; see $log_file"
