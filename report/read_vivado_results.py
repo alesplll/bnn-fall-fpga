@@ -41,10 +41,21 @@ def resources(path: Path, routed: bool = False) -> dict[str, dict[str, float]]:
     text = path.read_text(encoding="utf-8", errors="replace")
     result = {}
     for name in RESOURCE_NAMES:
-        pattern = rf"^\|\s*{re.escape(name)}\s*\|\s*(\d+)\s*\|[^\n]*\|\s*([\d.]+)\s*\|$"
+        pattern = (
+            rf"^\|\s*{re.escape(name)}\*?\s*\|\s*(\d+)\s*\|"
+            rf"\s*\d+\s*\|\s*\d+\s*\|\s*(\d+)\s*\|"
+            rf"\s*(<?[\d.]+)\s*\|$"
+        )
         match = re.search(pattern, text, re.MULTILINE)
         if match:
-            result[name] = {"used": int(match.group(1)), "percent": float(match.group(2))}
+            used = int(match.group(1))
+            available = int(match.group(2))
+            shown_percent = match.group(3)
+            percent = (
+                100 * used / available if shown_percent.startswith("<")
+                else float(shown_percent)
+            )
+            result[name] = {"used": used, "percent": percent}
         elif name == "Slice" and not routed:
             continue
         elif name in ("Block RAM Tile", "DSPs"):
