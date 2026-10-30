@@ -1,0 +1,6 @@
+top=bnn_benchmark_pipelined
+requested_period_ns=10.0
+synthesis_status=synth_design Complete!
+implementation_status=route_design Complete!
+actual_period_ns=10.000
+worst_setup_slack_ns=1.016

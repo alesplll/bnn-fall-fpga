@@ -5,7 +5,8 @@ from __future__ import annotations
 from pathlib import Path
 
 from docx import Document
-from docx.shared import Pt
+from docx.enum.text import WD_ALIGN_PARAGRAPH
+from docx.shared import Cm, Pt
 
 from build_combined_report import (
     before,
@@ -34,8 +35,35 @@ def used(case: dict, resource: str) -> int:
 def source_without_comments(filename: str) -> str:
     lines = (REPO / filename).read_text(encoding="utf-8").splitlines()
     return "\n".join(
-        line for line in lines if not line.lstrip().startswith(("//", "#"))
+        line.split("//", 1)[0].rstrip()
+        for line in lines if not line.lstrip().startswith(("//", "#"))
     ).strip()
+
+
+def first(doc, predicate):
+    return next(paragraph for paragraph in doc.paragraphs if predicate(paragraph))
+
+
+def pipeline_diagram_before(doc, anchor) -> None:
+    labels = (
+        "Входной регистр\n5 признаков",
+        "Слой A\n5 × 8 MAC",
+        "Регистр\n8 бит + valid",
+        "Слой B\nXNOR + popcount",
+        "Регистр\nответ + valid",
+    )
+    table = doc.add_table(rows=1, cols=len(labels))
+    table.autofit = False
+    for cell, label in zip(table.rows[0].cells, labels):
+        cell.width = Cm(3.1)
+        cell.text = label
+        cell.paragraphs[0].style = doc.styles["Report Table Text"]
+        cell.paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.CENTER
+    anchor._p.addprevious(table._tbl)
+    caption = before(anchor, "Рисунок 9.2 — Граница регистров между слоями сети", "Report Body")
+    caption.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    caption.paragraph_format.space_before = Pt(6)
+    caption.paragraph_format.space_after = Pt(12)
 
 
 def main() -> None:
@@ -45,49 +73,41 @@ def main() -> None:
     pipeline = c["pipeline_20"]
     proto = c["pr3_prototype_20"]
     proto_pipe = c["pr3_pipeline_20"]
-    base_period = baseline["period_ns"] - baseline["wns_ns"]
-    pipe_period = pipeline["period_ns"] - pipeline["wns_ns"]
-    if base_period <= 0 or pipe_period <= 0:
-        raise ValueError("Cannot derive a positive critical period")
-    speed_ratio = base_period / pipe_period
     comparison = (
-        f"Расчётная длительность критического внутреннего пути уменьшилась "
-        f"с {n(base_period)} до {n(pipe_period)} нс; оценка предельной частоты "
-        f"увеличилась в {n(speed_ratio, 2)} раза. "
-        if speed_ratio > 1.0 else
-        f"После добавления регистра расчётная длительность критического "
-        f"внутреннего пути изменилась с {n(base_period)} до {n(pipe_period)} нс; "
-        f"увеличение предельной частоты не получено. "
-    )
-    ten_ns = (
-        f"При периоде 10 нс исходный вариант имеет WNS "
-        f"{n(c['baseline_10']['wns_ns'])} нс, конвейерный — "
-        f"{n(c['pipeline_10']['wns_ns'])} нс. "
+        f"При периоде 20 нс запас по установке вырос с "
+        f"{n(baseline['wns_ns'])} до {n(pipeline['wns_ns'])} нс "
+        f"(на {n(pipeline['wns_ns'] - baseline['wns_ns'])} нс). "
+        f"При периоде 10 нс оба варианта выдержали ограничение: "
+        f"WNS составил {n(c['baseline_10']['wns_ns'])} и "
+        f"{n(c['pipeline_10']['wns_ns'])} нс соответственно. "
     )
     doc = Document(SOURCE)
-    p = doc.paragraphs
-    replace_text(p[8], "ОТЧЁТ ПО ПРАКТИЧЕСКИМ РАБОТАМ № 1–3")
-    replace_text(p[11], "Тема: Программная модель, RTL-модель и прототип классификатора падений на ПЛИС")
+    replace_text(doc.paragraphs[8], "ОТЧЁТ ПО ПРАКТИЧЕСКИМ РАБОТАМ № 1–3")
+    replace_text(doc.paragraphs[11], "Тема: Программная модель, RTL-модель и прототип классификатора падений на ПЛИС")
     replace_text(
-        p[44],
+        first(doc, lambda p: p.text.startswith("Цель практических работ")),
         "Цель работы — разработать программный эталон классификатора падений, "
         "реализовать его на Verilog, проверить совпадение результатов и "
         "получить прототип для ПЛИС. После функциональной проверки "
         "исследуется влияние регистра между слоями на временные характеристики "
         "и использование ресурсов.",
     )
-    before(p[54], "– проверить верхний модуль с контрольными данными и выполнить размещение и трассировку;", "Report Body")
-    before(p[54], "– сравнить исходный и конвейерный вычислительные тракты при одинаковых входах, кристалле и ограничениях.", "Report Body")
+    intro_end = first(doc, lambda p: p.style.name == "Report Heading 1" and p.text.startswith("1 ПОСТАНОВКА ЗАДАЧИ"))
+    before(intro_end, "– проверить верхний модуль с контрольными данными и выполнить размещение и трассировку;", "Report Body")
+    before(intro_end, "– сравнить исходный и конвейерный вычислительные тракты при одинаковых входах и ограничениях.", "Report Body")
 
-    toc_before(p[38], "9 ПРОТОТИП И КОНВЕЙЕРНАЯ АРХИТЕКТУРА\t21", p[37])
-    toc_before(p[38], "10 ПРОВЕРКА И РЕЗУЛЬТАТЫ РЕАЛИЗАЦИИ\t24", p[37])
-    replace_text(p[38], "ЗАКЛЮЧЕНИЕ\t26")
-    replace_text(p[39], "СПИСОК ИСПОЛЬЗОВАННЫХ ИСТОЧНИКОВ\t27")
-    replace_text(p[40], "ПРИЛОЖЕНИЕ А КЛЮЧЕВЫЕ ФРАГМЕНТЫ ПРОГРАММЫ\t28")
-    replace_text(p[41], "ПРИЛОЖЕНИЕ Б ИСХОДНЫЙ КОД RTL-МОДЕЛИ\t33")
-    toc_before(p[42], "ПРИЛОЖЕНИЕ В КОД ПРОТОТИПА И КОНВЕЙЕРА\t36", p[41])
+    toc_conclusion = first(doc, lambda p: p.style.name == "Report Contents" and p.text.startswith("ЗАКЛЮЧЕНИЕ"))
+    toc_before(toc_conclusion, "9 ПРОТОТИП И КОНВЕЙЕРНАЯ АРХИТЕКТУРА\t14", toc_conclusion)
+    toc_before(toc_conclusion, "10 ПРОВЕРКА И РЕЗУЛЬТАТЫ РЕАЛИЗАЦИИ\t16", toc_conclusion)
+    replace_text(toc_conclusion, "ЗАКЛЮЧЕНИЕ\t19")
+    replace_text(first(doc, lambda p: p.style.name == "Report Contents" and p.text.startswith("СПИСОК ИСПОЛЬЗОВАННЫХ ИСТОЧНИКОВ")), "СПИСОК ИСПОЛЬЗОВАННЫХ ИСТОЧНИКОВ\t20")
+    replace_text(first(doc, lambda p: p.style.name == "Report Contents" and p.text.startswith("ПРИЛОЖЕНИЕ А")), "ПРИЛОЖЕНИЕ А КЛЮЧЕВЫЕ ФРАГМЕНТЫ ПРОГРАММЫ\t21")
+    toc_appendix_b = first(doc, lambda p: p.style.name == "Report Contents" and p.text.startswith("ПРИЛОЖЕНИЕ Б"))
+    replace_text(toc_appendix_b, "ПРИЛОЖЕНИЕ Б ИСХОДНЫЙ КОД RTL-МОДЕЛИ\t26")
+    toc_intro_end = first(doc, lambda p: p.style.name == "Report Heading 1" and p.text.strip() == "ВВЕДЕНИЕ")
+    toc_before(toc_intro_end, "ПРИЛОЖЕНИЕ В КОД ПРОТОТИПА И КОНВЕЙЕРА\t29", toc_appendix_b)
 
-    anchor = p[149]
+    anchor = first(doc, lambda p: p.style.name == "Report Heading 1" and p.text.strip() == "ЗАКЛЮЧЕНИЕ")
     before(anchor, "9 ПРОТОТИП И КОНВЕЙЕРНАЯ АРХИТЕКТУРА", "Report Heading 1")
     before(anchor, "9.1 Верхний модуль и контрольные данные", "Report Heading 2")
     before(
@@ -140,7 +160,7 @@ def main() -> None:
         "физический регистр; его создаёт запись на posedge clk.",
         "Report Body",
     )
-    evidence_figure_before(anchor, "vivado_pr23_pipeline_schematic.jpg", "Рисунок 9.2 — Схема конвейерного классификатора")
+    pipeline_diagram_before(doc, anchor)
 
     before(anchor, "9.3 Условия сравнения", "Report Heading 2")
     before(
@@ -150,10 +170,9 @@ def main() -> None:
         "40-битный вход, входной регистр, интерфейс valid и одни и те же "
         "параметры сети. Входы остаются переменными. Для каждого варианта "
         "выполнены синтез, размещение и трассировка при периодах 20 и 10 нс. "
-        "Для каждого прогона сценарий создаёт ограничение create_clock "
-        "с соответствующим периодом. "
+        "Тактовый период ограничен соответствующим значением. "
         "Таким образом, сравнивается именно граница регистров "
-        "вычислительного тракта. Оценки частоты относятся только к "
+        "вычислительного тракта. Выводы о таймингах относятся только к "
         "ограниченным внутренним синхронным путям.",
         "Report Body",
     )
@@ -168,21 +187,20 @@ def main() -> None:
         "функциональной симуляции после синтеза. Самопроверяющиеся "
         "прототипы прошли контрольный набор из 64 слов; тестбенчи "
         "подтвердили обнаружение намеренно изменённого эталонного бита "
-        "и повторный успешный запуск. Во всех указанных прогонах "
+        "и повторный успешный запуск. При неизменённом эталоне "
         "расхождений нет.",
         "Report Body",
     )
-    evidence_figure_before(anchor, "vivado_pr23_simulation_pass.jpg", "Рисунок 10.1 — Результат симуляции в XSim")
+    evidence_figure_before(anchor, "vivado_pr23_pipeline_pass.jpg", "Рисунок 10.1 — Сверка конвейерного классификатора с 2331 эталонным ответом в XSim")
 
     before(anchor, "10.2 Ресурсы и временные характеристики", "Report Heading 2")
     before(anchor, "Таблица 10.1 — Сравнение вычислительных трактов после трассировки", "Report Table Caption")
     table_before(
         doc, anchor,
-        ["Вариант", "Период, нс", "LUT", "Регистры", "WNS, нс", "Оценка Fmax, МГц"],
+        ["Вариант", "Период, нс", "Slice LUT", "Регистры", "WNS, нс"],
         [
             [label, n(c[key]["period_ns"]), str(used(c[key], "Slice LUTs")),
-             str(used(c[key], "Slice Registers")), n(c[key]["wns_ns"]),
-             n(1000 / (c[key]["period_ns"] - c[key]["wns_ns"]), 1)]
+             str(used(c[key], "Slice Registers")), n(c[key]["wns_ns"])]
             for key, label in (
                 ("baseline_20", "Исходный"),
                 ("pipeline_20", "С регистром"),
@@ -190,22 +208,21 @@ def main() -> None:
                 ("pipeline_10", "С регистром"),
             )
         ],
-        [3.0, 2.2, 1.5, 2.2, 2.1, 4.5],
+        [3.8, 2.8, 2.8, 3.1, 3.0],
     )
     before(
         anchor,
-        comparison + ten_ns +
-        "Оценка Fmax получена как 1000/(заданный период − WNS) по "
-        "критическому пути проложенной схемы; это аналитическая оценка "
-        "для данного прогона Vivado, а не измерение на плате. "
-        "Отрицательный WNS означает, что соответствующий заданный "
-        "период не выдержан. Оба варианта принимают один новый вектор "
-        "каждый такт, поэтому изменение скорости потока определяется "
-        "достижимым периодом. Задержка одного ответа у конвейера "
-        "увеличивается на один такт.",
+        comparison +
+        "При одинаковом периоде оба ядра принимают один вектор каждый такт. "
+        "Промежуточный регистр добавил девять триггеров и один такт задержки "
+        "отдельного ответа. Преимущество конвейера здесь — запас по таймингу, "
+        "а не увеличение числа ответов за такт. Оба варианта прошли 10 нс "
+        "(100 МГц) на ограниченных внутренних путях; точная предельная "
+        "частота по этим двум прогонам не определена.",
         "Report Body",
     )
-    before(anchor, "Таблица 10.2 — Результаты прототипов с контрольной памятью", "Report Table Caption")
+    prototype_caption = before(anchor, "Таблица 10.2 — Результаты прототипов с контрольной памятью", "Report Table Caption")
+    prototype_caption.paragraph_format.page_break_before = True
     table_before(
         doc, anchor,
         ["Верхний модуль", "LUT", "Регистры", "Проложено цепей", "WNS при 20 нс"],
@@ -241,20 +258,31 @@ def main() -> None:
         "синтез и физическая реализация для указанного кристалла.",
         "Report Body",
     )
+    before(
+        anchor,
+        "В отдельном монолитном классификаторе Vivado предупредил об "
+        "удалении одного промежуточного бита при оптимизации. Для сравнения "
+        "вариантов использованы модульные вычислительные тракты; их ответы "
+        "проверены на 2331 входе также после синтеза. Все четыре файла "
+        "параметров сети успешно прочитаны при синтезе.",
+        "Report Body",
+    )
 
+    conclusion = first(doc, lambda p: p.text.startswith("В практических работах № 1–2 создана"))
     replace_text(
-        p[150],
+        conclusion,
         "Построены программная модель, целочисленный RTL-классификатор и "
         "прототип на Artix-7. На 2331 эталонном векторе подтверждено "
-        "совпадение вычислений в поведенческой и функциональной "
-        "симуляции после синтеза. Верхний модуль проверил 64 контрольных "
+        "совпадение вычислений с эталоном в поведенческой симуляции; "
+        "для модульных вариантов — также после синтеза. Верхний модуль "
+        "проверил 64 контрольных "
         "входа, обнаружение ошибки и повторный запуск. Размещение и "
         "трассировка в Vivado 2022.2 завершены для исходного и "
         "конвейерного вариантов. " + comparison +
         "Оценка относится к внутренним синхронным путям; "
         "назначение выводов и проверка на плате не выполнялись.",
     )
-    source_anchor = p[161]
+    source_anchor = first(doc, lambda p: p.style.name == "Report Appendix" and p.text.strip() == "Приложение А")
     before(
         source_anchor,
         "10. AMD. Vivado Design Suite User Guide: Implementation (UG904), "
@@ -266,8 +294,8 @@ def main() -> None:
     doc.add_paragraph("Приложение В", style="Report Appendix")
     doc.add_paragraph("Код прототипа и конвейерного варианта", style="Report Appendix Title")
     doc.add_paragraph(
-        "Приведены полные тексты модулей и тестбенчей, использованных "
-        "для функциональной проверки и сравнения. Комментарии опущены.",
+        "Приведены полные тексты вычислительных и верхних модулей, "
+        "использованных для реализации и сравнения. Комментарии опущены.",
         style="Report Body",
     )
     sources = (
@@ -275,18 +303,19 @@ def main() -> None:
         ("В.2", "rtl/bnn_layer_b.v", "Слой B"),
         ("В.3", "rtl/bnn_classifier_modular.v", "Классификатор без промежуточного регистра"),
         ("В.4", "rtl/bnn_classifier_pipelined.v", "Конвейерный классификатор"),
-        ("В.5", "rtl/tb_bnn_classifier_pipelined.v", "Проверка конвейерного классификатора"),
-        ("В.6", "fpga/fpga_top.v", "Прототип"),
-        ("В.7", "fpga/tb_fpga_top.v", "Проверка прототипа"),
-        ("В.8", "fpga/fpga_top_pipelined.v", "Конвейерный прототип"),
-        ("В.9", "fpga/tb_fpga_top_pipelined.v", "Проверка конвейерного прототипа"),
-        ("В.10", "fpga/bnn_benchmark.v", "Сравниваемые верхние модули"),
-        ("В.11", "fpga/tb_bnn_benchmark.v", "Проверка сравниваемых верхних модулей"),
+        ("В.5", "fpga/fpga_top.v", "Прототип с контрольными данными"),
+        ("В.6", "fpga/fpga_top_pipelined.v", "Конвейерный прототип"),
+        ("В.7", "fpga/bnn_benchmark.v", "Верхние модули для сравнения"),
     )
     for number, filename, title in sources:
         doc.add_paragraph(f"Листинг {number} — {title}", style="Report Listing Caption")
         paragraph = doc.add_paragraph(style="Report Code")
         paragraph.add_run(source_without_comments(filename)).font.size = Pt(9)
+
+    for paragraph in doc.paragraphs:
+        if paragraph.style.name == "Report Heading 1" and paragraph.text[:1].isdigit():
+            paragraph.paragraph_format.page_break_before = False
+            paragraph.paragraph_format.keep_with_next = True
 
     doc.save(OUTPUT)
     print(OUTPUT)

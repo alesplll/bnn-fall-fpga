@@ -1,0 +1,3 @@
+Time resolution is 1 ps
+PASS: 2331 vectors; output, valid signal and golden model agree
+$finish called at time : 23346 ns : File "D:/neuroproc/bnn-fall-fpga/rtl/tb_bnn_classifier.v" Line 115

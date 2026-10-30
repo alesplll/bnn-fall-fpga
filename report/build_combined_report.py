@@ -164,18 +164,20 @@ def main() -> None:
 
     # The source document has a static contents page. Page numbers are filled
     # after rendering, while these entries preserve its paragraph style.
-    replace_text(p[31], "2 ИЗВЛЕЧЕНИЕ ПРИЗНАКОВ И ФОРМИРОВАНИЕ ВЫБОРОК\t6")
-    replace_text(p[32], "3 АРХИТЕКТУРА СЕТИ И КВАНТОВАНИЕ\t8")
-    replace_text(p[33], "4 ОБУЧЕНИЕ И ПРОГРАММНАЯ РЕАЛИЗАЦИЯ\t10")
-    replace_text(p[34], "5 РЕЗУЛЬТАТЫ И ЭТАЛОННЫЙ ОТКЛИК\t12")
+    replace_text(p[30], "1 ПОСТАНОВКА ЗАДАЧИ И ДАТАСЕТ SISFALL\t4")
+    replace_text(p[31], "2 ИЗВЛЕЧЕНИЕ ПРИЗНАКОВ И ФОРМИРОВАНИЕ ВЫБОРОК\t5")
+    replace_text(p[32], "3 АРХИТЕКТУРА СЕТИ И КВАНТОВАНИЕ\t7")
+    replace_text(p[33], "4 ОБУЧЕНИЕ И ПРОГРАММНАЯ РЕАЛИЗАЦИЯ\t8")
+    replace_text(p[34], "5 РЕЗУЛЬТАТЫ И ЭТАЛОННЫЙ ОТКЛИК\t9")
     toc_anchor = p[35]
-    toc_before(toc_anchor, "6 ПОСТАНОВКА ЗАДАЧИ ПРАКТИЧЕСКОЙ РАБОТЫ № 2\t15", p[34])
-    toc_before(toc_anchor, "7 РЕАЛИЗАЦИЯ RTL-МОДЕЛИ\t17", p[34])
-    toc_before(toc_anchor, "8 СИМУЛЯЦИЯ И СВЕРКА С ЭТАЛОНОМ\t18", p[34])
-    replace_text(p[35], "ЗАКЛЮЧЕНИЕ\t21")
-    replace_text(p[36], "СПИСОК ИСПОЛЬЗОВАННЫХ ИСТОЧНИКОВ\t22")
-    replace_text(p[37], "ПРИЛОЖЕНИЕ А КЛЮЧЕВЫЕ ФРАГМЕНТЫ ПРОГРАММЫ\t23")
-    toc_before(p[38], "ПРИЛОЖЕНИЕ Б ИСХОДНЫЙ КОД RTL-МОДЕЛИ\t28", p[34])
+    toc_before(toc_anchor, "6 ПОСТАНОВКА ЗАДАЧИ ПРАКТИЧЕСКОЙ РАБОТЫ № 2\t11", p[34])
+    toc_before(toc_anchor, "7 РЕАЛИЗАЦИЯ RTL-МОДЕЛИ\t12", p[34])
+    toc_before(toc_anchor, "8 СИМУЛЯЦИЯ И СВЕРКА С ЭТАЛОНОМ\t13", p[34])
+    replace_text(p[35], "ЗАКЛЮЧЕНИЕ\t15")
+    replace_text(p[36], "СПИСОК ИСПОЛЬЗОВАННЫХ ИСТОЧНИКОВ\t16")
+    replace_text(p[37], "ПРИЛОЖЕНИЕ А КЛЮЧЕВЫЕ ФРАГМЕНТЫ ПРОГРАММЫ\t17")
+    toc_before(p[38], "ПРИЛОЖЕНИЕ Б ИСХОДНЫЙ КОД RTL-МОДЕЛИ\t22", p[34])
+    replace_text(p[84], p[84].text.replace(" (PyTorch недоступен в окружении)", ""))
 
     anchor = p[109]  # Insert all PR2 material before the original conclusion.
     before(anchor, "6 ПОСТАНОВКА ЗАДАЧИ ПРАКТИЧЕСКОЙ РАБОТЫ № 2", "Report Heading 1")
@@ -207,11 +209,10 @@ def main() -> None:
                  [3.5, 2.7, 9.3])
     after_table = before(anchor,
            "Единый проект ПР2–ПР3 создан в Vivado 2022.2 для кристалла Xilinx "
-           "Artix-7 xc7a100tcsg324-1. В его состав входят RTL-модуль, "
-           "тестбенч и файлы памяти с параметрами и тестовыми данными "
-           "(рисунок 6.1).", "Report Body")
+           "Artix-7 xc7a100tcsg324-1. В него включены RTL-модули, "
+           "тестбенчи и файлы памяти с параметрами и контрольными данными.",
+           "Report Body")
     after_table.paragraph_format.space_before = Pt(6)
-    evidence_figure_before(anchor, "vivado_pr23_project.jpg", "Рисунок 6.1 — Единый проект в Vivado 2022.2")
 
     before(anchor, "7 РЕАЛИЗАЦИЯ RTL-МОДЕЛИ", "Report Heading 1")
     before(anchor, "7.1 Слой A: знаковое умножение и накопление", "Report Heading 2")
@@ -270,8 +271,8 @@ def main() -> None:
     before(anchor,
            "В Vivado 2022.2 создан проект для xc7a100tcsg324-1. "
            "Поведенческая симуляция XSim завершилась сообщением "
-           "PASS: 2331 vectors (рисунок 8.1). Синтез успешно завершился; "
-           "получена логическая схема классификатора (рисунок 8.2). "
+           "PASS: 2331 vectors. Синтез успешно завершился; "
+           "получена логическая схема классификатора (рисунок 8.1). "
            "Согласно отчёту ресурсов, "
            f"использовано {pr2_lut} Slice LUT, {pr2_ff} Slice Register, "
            f"{pr2_iob} Bonded IOB и {pr2_bufg} BUFGCTRL. "
@@ -284,8 +285,7 @@ def main() -> None:
         ["Bonded IOB", str(pr2_iob)],
         ["BUFGCTRL", str(pr2_bufg)],
     ], [8.0, 7.5])
-    evidence_figure_before(anchor, "vivado_pr23_pr2_pass.jpg", "Рисунок 8.1 — Проверка 2331 эталонного вектора в XSim")
-    evidence_figure_before(anchor, "vivado_pr23_pr2_schematic.jpg", "Рисунок 8.2 — Синтезированная схема классификатора")
+    evidence_figure_before(anchor, "vivado_pr23_pr2_schematic.jpg", "Рисунок 8.1 — Синтезированная схема классификатора")
 
     replace_text(
         p[110],
@@ -324,6 +324,11 @@ def main() -> None:
         code = doc.add_paragraph(style="Report Code")
         run = code.add_run(verilog_without_comments(filename))
         run.font.size = Pt(9)
+
+    for paragraph in doc.paragraphs:
+        if paragraph.style.name == "Report Heading 1" and paragraph.text[:1].isdigit():
+            paragraph.paragraph_format.page_break_before = False
+            paragraph.paragraph_format.keep_with_next = True
 
     doc.save(OUTPUT)
     print(OUTPUT)

@@ -1,0 +1,770 @@
+Copyright 1986-2022 Xilinx, Inc. All Rights Reserved.
+-------------------------------------------------------------------------------------------------------------------------------------
+| Tool Version : Vivado v.2022.2 (win64) Build 3671981 Fri Oct 14 05:00:03 MDT 2022
+| Date         : Thu Oct 29 01:39:31 2026
+| Host         : HONOR993 running 64-bit major release  (build 9200)
+| Command      : report_timing -max_paths 10 -file D:/neuroproc/bnn-fall-fpga/vivado_pr23/results/pr3_pipeline_20/critical_paths.rpt
+| Design       : fpga_top_pipelined
+| Device       : 7a100t-csg324
+| Speed File   : -1  PRODUCTION 1.23 2018-06-13
+-------------------------------------------------------------------------------------------------------------------------------------
+
+Timing Report
+
+Slack (MET) :             6.999ns  (required time - arrival time)
+  Source:                 send_index_reg[0]/C
+                            (rising edge-triggered cell FDRE clocked by clk  {rise@0.000ns fall@10.000ns period=20.000ns})
+  Destination:            classifier/hidden_q_reg[2]/D
+                            (rising edge-triggered cell FDRE clocked by clk  {rise@0.000ns fall@10.000ns period=20.000ns})
+  Path Group:             clk
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            20.000ns  (clk rise@20.000ns - clk rise@0.000ns)
+  Data Path Delay:        12.726ns  (logic 4.448ns (34.953%)  route 8.278ns (65.047%))
+  Logic Levels:           12  (CARRY4=6 LUT2=1 LUT3=1 LUT4=2 LUT6=2)
+  Clock Path Skew:        -0.042ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    4.409ns = ( 24.409 - 20.000 ) 
+    Source Clock Delay      (SCD):    4.774ns
+    Clock Pessimism Removal (CPR):    0.323ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk rise edge)        0.000     0.000 r  
+    N15                                               0.000     0.000 r  clk (IN)
+                         net (fo=0)                   0.000     0.000    clk
+    N15                  IBUF (Prop_ibuf_I_O)         0.948     0.948 r  clk_IBUF_inst/O
+                         net (fo=1, routed)           2.016     2.963    clk_IBUF
+    BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.096     3.059 r  clk_IBUF_BUFG_inst/O
+                         net (fo=49, routed)          1.714     4.774    clk_IBUF_BUFG
+    SLICE_X1Y67          FDRE                                         r  send_index_reg[0]/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X1Y67          FDRE (Prop_fdre_C_Q)         0.456     5.230 r  send_index_reg[0]/Q
+                         net (fo=69, routed)          3.442     8.672    classifier/layer_a/hidden_bits1__2_carry_i_1_0[0]
+    SLICE_X7Y57          LUT6 (Prop_lut6_I0_O)        0.124     8.796 r  classifier/layer_a/g0_b5/O
+                         net (fo=39, routed)          1.675    10.471    classifier/layer_a/input_features[5]
+    SLICE_X7Y68          LUT2 (Prop_lut2_I0_O)        0.124    10.595 r  classifier/layer_a/i___0_carry__0_i_4/O
+                         net (fo=1, routed)           0.000    10.595    classifier/layer_a/i___0_carry__0_i_4_n_0
+    SLICE_X7Y68          CARRY4 (Prop_carry4_S[0]_CO[3])
+                                                      0.532    11.127 r  classifier/layer_a/hidden_bits2_inferred__1/i___0_carry__0/CO[3]
+                         net (fo=1, routed)           0.000    11.127    classifier/layer_a/hidden_bits2_inferred__1/i___0_carry__0_n_0
+    SLICE_X7Y69          CARRY4 (Prop_carry4_CI_CO[0])
+                                                      0.271    11.398 r  classifier/layer_a/i___43_carry__0_i_9/CO[0]
+                         net (fo=6, routed)           0.823    12.221    classifier/layer_a/i___43_carry__0_i_9_n_3
+    SLICE_X5Y69          LUT3 (Prop_lut3_I0_O)        0.401    12.622 r  classifier/layer_a/i___43_carry__0_i_10/O
+                         net (fo=1, routed)           0.418    13.040    classifier/layer_a/i___43_carry__0_i_10_n_0
+    SLICE_X6Y69          LUT6 (Prop_lut6_I5_O)        0.326    13.366 r  classifier/layer_a/i___43_carry__0_i_6/O
+                         net (fo=1, routed)           0.000    13.366    classifier/layer_a/i___43_carry__0_i_6_n_0
+    SLICE_X6Y69          CARRY4 (Prop_carry4_S[2]_O[3])
+                                                      0.352    13.718 r  classifier/layer_a/hidden_bits2_inferred__1/i___43_carry__0/O[3]
+                         net (fo=4, routed)           1.318    15.036    classifier/layer_a/hidden_bits2_inferred__1/i___43_carry__0_n_4
+    SLICE_X6Y66          LUT4 (Prop_lut4_I1_O)        0.307    15.343 r  classifier/layer_a/i___2_carry__1_i_5/O
+                         net (fo=1, routed)           0.000    15.343    classifier/layer_a/i___2_carry__1_i_5_n_0
+    SLICE_X6Y66          CARRY4 (Prop_carry4_S[3]_CO[3])
+                                                      0.376    15.719 r  classifier/layer_a/hidden_bits1_inferred__1/i___2_carry__1/CO[3]
+                         net (fo=1, routed)           0.000    15.719    classifier/layer_a/hidden_bits1_inferred__1/i___2_carry__1_n_0
+    SLICE_X6Y67          CARRY4 (Prop_carry4_CI_O[1])
+                                                      0.323    16.042 r  classifier/layer_a/hidden_bits1_inferred__1/i___2_carry__2/O[1]
+                         net (fo=3, routed)           0.602    16.643    classifier/layer_a/hidden_bits1_inferred__1/i___2_carry__2_n_6
+    SLICE_X5Y67          LUT4 (Prop_lut4_I2_O)        0.306    16.949 r  classifier/layer_a/i___48_carry__2_i_6/O
+                         net (fo=1, routed)           0.000    16.949    classifier/layer_a/i___48_carry__2_i_6_n_0
+    SLICE_X5Y67          CARRY4 (Prop_carry4_S[1]_CO[3])
+                                                      0.550    17.499 r  classifier/layer_a/hidden_bits1_inferred__1/i___48_carry__2/CO[3]
+                         net (fo=1, routed)           0.000    17.499    classifier/hidden_next[2]
+    SLICE_X5Y67          FDRE                                         r  classifier/hidden_q_reg[2]/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk rise edge)       20.000    20.000 r  
+    N15                                               0.000    20.000 r  clk (IN)
+                         net (fo=0)                   0.000    20.000    clk
+    N15                  IBUF (Prop_ibuf_I_O)         0.814    20.814 r  clk_IBUF_inst/O
+                         net (fo=1, routed)           1.911    22.725    clk_IBUF
+    BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.091    22.816 r  clk_IBUF_BUFG_inst/O
+                         net (fo=49, routed)          1.592    24.409    classifier/CLK
+    SLICE_X5Y67          FDRE                                         r  classifier/hidden_q_reg[2]/C
+                         clock pessimism              0.323    24.732    
+                         clock uncertainty           -0.035    24.696    
+    SLICE_X5Y67          FDRE (Setup_fdre_C_D)       -0.198    24.498    classifier/hidden_q_reg[2]
+  -------------------------------------------------------------------
+                         required time                         24.498    
+                         arrival time                         -17.499    
+  -------------------------------------------------------------------
+                         slack                                  6.999    
+
+Slack (MET) :             7.088ns  (required time - arrival time)
+  Source:                 send_index_reg[0]/C
+                            (rising edge-triggered cell FDRE clocked by clk  {rise@0.000ns fall@10.000ns period=20.000ns})
+  Destination:            classifier/hidden_q_reg[5]/D
+                            (rising edge-triggered cell FDRE clocked by clk  {rise@0.000ns fall@10.000ns period=20.000ns})
+  Path Group:             clk
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            20.000ns  (clk rise@20.000ns - clk rise@0.000ns)
+  Data Path Delay:        12.888ns  (logic 4.627ns (35.902%)  route 8.261ns (64.098%))
+  Logic Levels:           11  (CARRY4=7 LUT2=1 LUT3=1 LUT5=1 LUT6=1)
+  Clock Path Skew:        -0.035ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    4.416ns = ( 24.416 - 20.000 ) 
+    Source Clock Delay      (SCD):    4.774ns
+    Clock Pessimism Removal (CPR):    0.323ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk rise edge)        0.000     0.000 r  
+    N15                                               0.000     0.000 r  clk (IN)
+                         net (fo=0)                   0.000     0.000    clk
+    N15                  IBUF (Prop_ibuf_I_O)         0.948     0.948 r  clk_IBUF_inst/O
+                         net (fo=1, routed)           2.016     2.963    clk_IBUF
+    BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.096     3.059 r  clk_IBUF_BUFG_inst/O
+                         net (fo=49, routed)          1.714     4.774    clk_IBUF_BUFG
+    SLICE_X1Y67          FDRE                                         r  send_index_reg[0]/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X1Y67          FDRE (Prop_fdre_C_Q)         0.456     5.230 r  send_index_reg[0]/Q
+                         net (fo=69, routed)          3.122     8.351    classifier/layer_a/hidden_bits1__2_carry_i_1_0[0]
+    SLICE_X12Y55         LUT6 (Prop_lut6_I0_O)        0.124     8.475 r  classifier/layer_a/g0_b10/O
+                         net (fo=27, routed)          1.484     9.960    classifier/layer_a/input_features[10]
+    SLICE_X5Y58          LUT2 (Prop_lut2_I0_O)        0.124    10.084 r  classifier/layer_a/i__carry_i_2__0/O
+                         net (fo=1, routed)           0.000    10.084    classifier/layer_a/i__carry_i_2__0_n_0
+    SLICE_X5Y58          CARRY4 (Prop_carry4_S[2]_CO[3])
+                                                      0.398    10.482 r  classifier/layer_a/hidden_bits3_inferred__1/i__carry/CO[3]
+                         net (fo=1, routed)           0.000    10.482    classifier/layer_a/hidden_bits3_inferred__1/i__carry_n_0
+    SLICE_X5Y59          CARRY4 (Prop_carry4_CI_O[1])
+                                                      0.334    10.816 r  classifier/layer_a/hidden_bits3_inferred__1/i__carry__0/O[1]
+                         net (fo=1, routed)           0.448    11.264    classifier/layer_a/hidden_bits3_inferred__1/i__carry__0_n_6
+    SLICE_X3Y58          CARRY4 (Prop_carry4_S[0]_O[1])
+                                                      0.727    11.991 r  classifier/layer_a/hidden_bits3_inferred__1/i___20_carry/O[1]
+                         net (fo=3, routed)           0.946    12.937    classifier/layer_a/hidden_bits3_inferred__1/i___20_carry_n_6
+    SLICE_X7Y59          LUT3 (Prop_lut3_I2_O)        0.329    13.266 r  classifier/layer_a/i___2_carry__0_i_1/O
+                         net (fo=1, routed)           0.625    13.890    classifier/layer_a/i___2_carry__0_i_1_n_0
+    SLICE_X6Y57          CARRY4 (Prop_carry4_DI[3]_CO[3])
+                                                      0.598    14.488 r  classifier/layer_a/hidden_bits1_inferred__4/i___2_carry__0/CO[3]
+                         net (fo=1, routed)           0.000    14.488    classifier/layer_a/hidden_bits1_inferred__4/i___2_carry__0_n_0
+    SLICE_X6Y58          CARRY4 (Prop_carry4_CI_O[1])
+                                                      0.323    14.811 r  classifier/layer_a/hidden_bits1_inferred__4/i___2_carry__1/O[1]
+                         net (fo=5, routed)           0.993    15.804    classifier/layer_a/hidden_bits1_inferred__4/i___2_carry__1_n_6
+    SLICE_X2Y57          LUT5 (Prop_lut5_I1_O)        0.334    16.138 r  classifier/layer_a/i___41_carry__1_i_1/O
+                         net (fo=1, routed)           0.643    16.781    classifier/layer_a/i___41_carry__1_i_1_n_0
+    SLICE_X4Y57          CARRY4 (Prop_carry4_DI[3]_CO[3])
+                                                      0.609    17.390 r  classifier/layer_a/hidden_bits1_inferred__4/i___41_carry__1/CO[3]
+                         net (fo=1, routed)           0.000    17.390    classifier/layer_a/hidden_bits1_inferred__4/i___41_carry__1_n_0
+    SLICE_X4Y58          CARRY4 (Prop_carry4_CI_CO[0])
+                                                      0.271    17.661 r  classifier/layer_a/hidden_bits1_inferred__4/i___41_carry__2/CO[0]
+                         net (fo=1, routed)           0.000    17.661    classifier/hidden_next[5]
+    SLICE_X4Y58          FDRE                                         r  classifier/hidden_q_reg[5]/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk rise edge)       20.000    20.000 r  
+    N15                                               0.000    20.000 r  clk (IN)
+                         net (fo=0)                   0.000    20.000    clk
+    N15                  IBUF (Prop_ibuf_I_O)         0.814    20.814 r  clk_IBUF_inst/O
+                         net (fo=1, routed)           1.911    22.725    clk_IBUF
+    BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.091    22.816 r  clk_IBUF_BUFG_inst/O
+                         net (fo=49, routed)          1.599    24.416    classifier/CLK
+    SLICE_X4Y58          FDRE                                         r  classifier/hidden_q_reg[5]/C
+                         clock pessimism              0.323    24.739    
+                         clock uncertainty           -0.035    24.703    
+    SLICE_X4Y58          FDRE (Setup_fdre_C_D)        0.046    24.749    classifier/hidden_q_reg[5]
+  -------------------------------------------------------------------
+                         required time                         24.749    
+                         arrival time                         -17.661    
+  -------------------------------------------------------------------
+                         slack                                  7.088    
+
+Slack (MET) :             7.232ns  (required time - arrival time)
+  Source:                 send_index_reg[3]/C
+                            (rising edge-triggered cell FDRE clocked by clk  {rise@0.000ns fall@10.000ns period=20.000ns})
+  Destination:            classifier/hidden_q_reg[1]/D
+                            (rising edge-triggered cell FDRE clocked by clk  {rise@0.000ns fall@10.000ns period=20.000ns})
+  Path Group:             clk
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            20.000ns  (clk rise@20.000ns - clk rise@0.000ns)
+  Data Path Delay:        12.708ns  (logic 4.652ns (36.608%)  route 8.056ns (63.392%))
+  Logic Levels:           12  (CARRY4=7 LUT2=1 LUT3=1 LUT4=1 LUT5=1 LUT6=1)
+  Clock Path Skew:        -0.119ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    4.332ns = ( 24.332 - 20.000 ) 
+    Source Clock Delay      (SCD):    4.774ns
+    Clock Pessimism Removal (CPR):    0.323ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk rise edge)        0.000     0.000 r  
+    N15                                               0.000     0.000 r  clk (IN)
+                         net (fo=0)                   0.000     0.000    clk
+    N15                  IBUF (Prop_ibuf_I_O)         0.948     0.948 r  clk_IBUF_inst/O
+                         net (fo=1, routed)           2.016     2.963    clk_IBUF
+    BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.096     3.059 r  clk_IBUF_BUFG_inst/O
+                         net (fo=49, routed)          1.714     4.774    clk_IBUF_BUFG
+    SLICE_X1Y67          FDRE                                         r  send_index_reg[3]/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X1Y67          FDRE (Prop_fdre_C_Q)         0.419     5.193 r  send_index_reg[3]/Q
+                         net (fo=66, routed)          2.288     7.481    classifier/layer_a/hidden_bits1__2_carry_i_1_0[3]
+    SLICE_X3Y54          LUT6 (Prop_lut6_I3_O)        0.299     7.780 r  classifier/layer_a/g0_b7/O
+                         net (fo=37, routed)          2.097     9.877    classifier/layer_a/input_features[7]
+    SLICE_X10Y65         LUT2 (Prop_lut2_I0_O)        0.124    10.001 r  classifier/layer_a/hidden_bits3_carry_i_1/O
+                         net (fo=1, routed)           0.000    10.001    classifier/layer_a/hidden_bits3_carry_i_1_n_0
+    SLICE_X10Y65         CARRY4 (Prop_carry4_S[3]_CO[3])
+                                                      0.376    10.377 r  classifier/layer_a/hidden_bits3_carry/CO[3]
+                         net (fo=1, routed)           0.000    10.377    classifier/layer_a/hidden_bits3_carry_n_0
+    SLICE_X10Y66         CARRY4 (Prop_carry4_CI_O[1])
+                                                      0.323    10.700 r  classifier/layer_a/hidden_bits3_carry__0/O[1]
+                         net (fo=3, routed)           0.844    11.544    classifier/layer_a/hidden_bits3_carry__0_n_6
+    SLICE_X12Y66         LUT4 (Prop_lut4_I2_O)        0.306    11.850 r  classifier/layer_a/hidden_bits3__26_carry_i_6/O
+                         net (fo=1, routed)           0.000    11.850    classifier/layer_a/hidden_bits3__26_carry_i_6_n_0
+    SLICE_X12Y66         CARRY4 (Prop_carry4_S[1]_CO[3])
+                                                      0.533    12.383 r  classifier/layer_a/hidden_bits3__26_carry/CO[3]
+                         net (fo=1, routed)           0.000    12.383    classifier/layer_a/hidden_bits3__26_carry_n_0
+    SLICE_X12Y67         CARRY4 (Prop_carry4_CI_O[0])
+                                                      0.219    12.602 r  classifier/layer_a/hidden_bits3__26_carry__0/O[0]
+                         net (fo=3, routed)           0.607    13.209    classifier/layer_a/hidden_bits3__26_carry__0_n_7
+    SLICE_X15Y66         LUT3 (Prop_lut3_I2_O)        0.295    13.504 r  classifier/layer_a/i___0_carry__1_i_3/O
+                         net (fo=1, routed)           0.569    14.072    classifier/layer_a/i___0_carry__1_i_3_n_0
+    SLICE_X14Y66         CARRY4 (Prop_carry4_DI[1]_CO[3])
+                                                      0.520    14.592 r  classifier/layer_a/hidden_bits1_inferred__0/i___0_carry__1/CO[3]
+                         net (fo=1, routed)           0.000    14.592    classifier/layer_a/hidden_bits1_inferred__0/i___0_carry__1_n_0
+    SLICE_X14Y67         CARRY4 (Prop_carry4_CI_O[0])
+                                                      0.219    14.811 r  classifier/layer_a/hidden_bits1_inferred__0/i___0_carry__2/O[0]
+                         net (fo=3, routed)           1.127    15.938    classifier/layer_a/hidden_bits1_inferred__0/i___0_carry__2_n_7
+    SLICE_X13Y64         LUT5 (Prop_lut5_I3_O)        0.323    16.261 r  classifier/layer_a/i___44_carry__2_i_1/O
+                         net (fo=1, routed)           0.524    16.785    classifier/layer_a/i___44_carry__2_i_1_n_0
+    SLICE_X12Y65         CARRY4 (Prop_carry4_DI[0]_CO[1])
+                                                      0.696    17.481 r  classifier/layer_a/hidden_bits1_inferred__0/i___44_carry__2/CO[1]
+                         net (fo=1, routed)           0.000    17.481    classifier/hidden_next[1]
+    SLICE_X12Y65         FDRE                                         r  classifier/hidden_q_reg[1]/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk rise edge)       20.000    20.000 r  
+    N15                                               0.000    20.000 r  clk (IN)
+                         net (fo=0)                   0.000    20.000    clk
+    N15                  IBUF (Prop_ibuf_I_O)         0.814    20.814 r  clk_IBUF_inst/O
+                         net (fo=1, routed)           1.911    22.725    clk_IBUF
+    BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.091    22.816 r  clk_IBUF_BUFG_inst/O
+                         net (fo=49, routed)          1.515    24.332    classifier/CLK
+    SLICE_X12Y65         FDRE                                         r  classifier/hidden_q_reg[1]/C
+                         clock pessimism              0.323    24.655    
+                         clock uncertainty           -0.035    24.619    
+    SLICE_X12Y65         FDRE (Setup_fdre_C_D)        0.094    24.713    classifier/hidden_q_reg[1]
+  -------------------------------------------------------------------
+                         required time                         24.713    
+                         arrival time                         -17.481    
+  -------------------------------------------------------------------
+                         slack                                  7.232    
+
+Slack (MET) :             7.632ns  (required time - arrival time)
+  Source:                 send_index_reg[3]/C
+                            (rising edge-triggered cell FDRE clocked by clk  {rise@0.000ns fall@10.000ns period=20.000ns})
+  Destination:            classifier/hidden_q_reg[4]/D
+                            (rising edge-triggered cell FDRE clocked by clk  {rise@0.000ns fall@10.000ns period=20.000ns})
+  Path Group:             clk
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            20.000ns  (clk rise@20.000ns - clk rise@0.000ns)
+  Data Path Delay:        12.268ns  (logic 4.441ns (36.200%)  route 7.827ns (63.800%))
+  Logic Levels:           15  (CARRY4=8 LUT2=2 LUT3=2 LUT4=1 LUT5=1 LUT6=1)
+  Clock Path Skew:        -0.111ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    4.340ns = ( 24.340 - 20.000 ) 
+    Source Clock Delay      (SCD):    4.774ns
+    Clock Pessimism Removal (CPR):    0.323ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk rise edge)        0.000     0.000 r  
+    N15                                               0.000     0.000 r  clk (IN)
+                         net (fo=0)                   0.000     0.000    clk
+    N15                  IBUF (Prop_ibuf_I_O)         0.948     0.948 r  clk_IBUF_inst/O
+                         net (fo=1, routed)           2.016     2.963    clk_IBUF
+    BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.096     3.059 r  clk_IBUF_BUFG_inst/O
+                         net (fo=49, routed)          1.714     4.774    clk_IBUF_BUFG
+    SLICE_X1Y67          FDRE                                         r  send_index_reg[3]/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X1Y67          FDRE (Prop_fdre_C_Q)         0.419     5.193 r  send_index_reg[3]/Q
+                         net (fo=66, routed)          2.684     7.877    classifier/layer_a/hidden_bits1__2_carry_i_1_0[3]
+    SLICE_X12Y56         LUT6 (Prop_lut6_I3_O)        0.299     8.176 r  classifier/layer_a/g0_b15/O
+                         net (fo=51, routed)          1.103     9.279    classifier/layer_a/input_features[15]
+    SLICE_X8Y61          LUT2 (Prop_lut2_I1_O)        0.124     9.403 r  classifier/layer_a/i__carry_i_2/O
+                         net (fo=1, routed)           0.000     9.403    classifier/layer_a/i__carry_i_2_n_0
+    SLICE_X8Y61          CARRY4 (Prop_carry4_S[2]_CO[3])
+                                                      0.380     9.783 r  classifier/layer_a/hidden_bits4_inferred__2/i__carry/CO[3]
+                         net (fo=1, routed)           0.000     9.783    classifier/layer_a/hidden_bits4_inferred__2/i__carry_n_0
+    SLICE_X8Y62          CARRY4 (Prop_carry4_CI_O[0])
+                                                      0.219    10.002 r  classifier/layer_a/hidden_bits4_inferred__2/i__carry__0/O[0]
+                         net (fo=1, routed)           0.546    10.548    classifier/layer_a/hidden_bits4_inferred__2/i__carry__0_n_7
+    SLICE_X9Y61          LUT2 (Prop_lut2_I1_O)        0.295    10.843 r  classifier/layer_a/i___20_carry_i_3/O
+                         net (fo=1, routed)           0.000    10.843    classifier/layer_a/i___20_carry_i_3_n_0
+    SLICE_X9Y61          CARRY4 (Prop_carry4_S[2]_O[2])
+                                                      0.248    11.091 r  classifier/layer_a/hidden_bits4_inferred__2/i___20_carry/O[2]
+                         net (fo=2, routed)           1.041    12.132    classifier/layer_a/hidden_bits4_inferred__2/i___20_carry_n_5
+    SLICE_X7Y65          LUT3 (Prop_lut3_I1_O)        0.302    12.434 r  classifier/layer_a/i___1_carry__0_i_2/O
+                         net (fo=2, routed)           1.108    13.542    classifier/layer_a/i___1_carry__0_i_2_n_0
+    SLICE_X10Y58         LUT4 (Prop_lut4_I0_O)        0.124    13.666 r  classifier/layer_a/i___1_carry__0_i_6/O
+                         net (fo=1, routed)           0.000    13.666    classifier/layer_a/i___1_carry__0_i_6_n_0
+    SLICE_X10Y58         CARRY4 (Prop_carry4_S[2]_CO[3])
+                                                      0.380    14.046 r  classifier/layer_a/hidden_bits1_inferred__3/i___1_carry__0/CO[3]
+                         net (fo=1, routed)           0.000    14.046    classifier/layer_a/hidden_bits1_inferred__3/i___1_carry__0_n_0
+    SLICE_X10Y59         CARRY4 (Prop_carry4_CI_O[0])
+                                                      0.219    14.265 r  classifier/layer_a/hidden_bits1_inferred__3/i___1_carry__1/O[0]
+                         net (fo=5, routed)           1.003    15.268    classifier/layer_a/hidden_bits1_inferred__3/i___1_carry__1_n_7
+    SLICE_X10Y56         LUT3 (Prop_lut3_I1_O)        0.321    15.589 r  classifier/layer_a/i___52_carry__1_i_9/O
+                         net (fo=1, routed)           0.341    15.930    classifier/layer_a/i___52_carry__1_i_9_n_0
+    SLICE_X11Y56         LUT5 (Prop_lut5_I2_O)        0.328    16.258 r  classifier/layer_a/i___52_carry__1_i_6/O
+                         net (fo=1, routed)           0.000    16.258    classifier/layer_a/i___52_carry__1_i_6_n_0
+    SLICE_X11Y56         CARRY4 (Prop_carry4_S[2]_CO[3])
+                                                      0.398    16.656 r  classifier/layer_a/hidden_bits1_inferred__3/i___52_carry__1/CO[3]
+                         net (fo=1, routed)           0.000    16.656    classifier/layer_a/hidden_bits1_inferred__3/i___52_carry__1_n_0
+    SLICE_X11Y57         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.114    16.770 r  classifier/layer_a/hidden_bits1_inferred__3/i___52_carry__2/CO[3]
+                         net (fo=1, routed)           0.000    16.770    classifier/layer_a/hidden_bits1_inferred__3/i___52_carry__2_n_0
+    SLICE_X11Y58         CARRY4 (Prop_carry4_CI_CO[0])
+                                                      0.271    17.041 r  classifier/layer_a/hidden_bits1_inferred__3/i___52_carry__3/CO[0]
+                         net (fo=1, routed)           0.000    17.041    classifier/hidden_next[4]
+    SLICE_X11Y58         FDRE                                         r  classifier/hidden_q_reg[4]/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk rise edge)       20.000    20.000 r  
+    N15                                               0.000    20.000 r  clk (IN)
+                         net (fo=0)                   0.000    20.000    clk
+    N15                  IBUF (Prop_ibuf_I_O)         0.814    20.814 r  clk_IBUF_inst/O
+                         net (fo=1, routed)           1.911    22.725    clk_IBUF
+    BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.091    22.816 r  clk_IBUF_BUFG_inst/O
+                         net (fo=49, routed)          1.523    24.340    classifier/CLK
+    SLICE_X11Y58         FDRE                                         r  classifier/hidden_q_reg[4]/C
+                         clock pessimism              0.323    24.663    
+                         clock uncertainty           -0.035    24.627    
+    SLICE_X11Y58         FDRE (Setup_fdre_C_D)        0.046    24.673    classifier/hidden_q_reg[4]
+  -------------------------------------------------------------------
+                         required time                         24.673    
+                         arrival time                         -17.041    
+  -------------------------------------------------------------------
+                         slack                                  7.632    
+
+Slack (MET) :             8.390ns  (required time - arrival time)
+  Source:                 send_index_reg[3]/C
+                            (rising edge-triggered cell FDRE clocked by clk  {rise@0.000ns fall@10.000ns period=20.000ns})
+  Destination:            classifier/hidden_q_reg[0]/D
+                            (rising edge-triggered cell FDRE clocked by clk  {rise@0.000ns fall@10.000ns period=20.000ns})
+  Path Group:             clk
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            20.000ns  (clk rise@20.000ns - clk rise@0.000ns)
+  Data Path Delay:        11.648ns  (logic 3.228ns (27.714%)  route 8.420ns (72.286%))
+  Logic Levels:           10  (CARRY4=4 LUT2=1 LUT3=1 LUT5=1 LUT6=3)
+  Clock Path Skew:        -0.021ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    4.414ns = ( 24.414 - 20.000 ) 
+    Source Clock Delay      (SCD):    4.774ns
+    Clock Pessimism Removal (CPR):    0.339ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk rise edge)        0.000     0.000 r  
+    N15                                               0.000     0.000 r  clk (IN)
+                         net (fo=0)                   0.000     0.000    clk
+    N15                  IBUF (Prop_ibuf_I_O)         0.948     0.948 r  clk_IBUF_inst/O
+                         net (fo=1, routed)           2.016     2.963    clk_IBUF
+    BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.096     3.059 r  clk_IBUF_BUFG_inst/O
+                         net (fo=49, routed)          1.714     4.774    clk_IBUF_BUFG
+    SLICE_X1Y67          FDRE                                         r  send_index_reg[3]/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X1Y67          FDRE (Prop_fdre_C_Q)         0.419     5.193 r  send_index_reg[3]/Q
+                         net (fo=66, routed)          2.684     7.877    classifier/layer_a/hidden_bits1__2_carry_i_1_0[3]
+    SLICE_X12Y56         LUT6 (Prop_lut6_I3_O)        0.299     8.176 r  classifier/layer_a/g0_b15/O
+                         net (fo=51, routed)          2.177    10.352    classifier/layer_a/input_features[15]
+    SLICE_X9Y67          LUT2 (Prop_lut2_I1_O)        0.152    10.504 r  classifier/layer_a/i__carry__0_i_9/O
+                         net (fo=3, routed)           0.626    11.130    classifier/layer_a/i__carry__0_i_9_n_0
+    SLICE_X7Y62          LUT6 (Prop_lut6_I1_O)        0.326    11.456 r  classifier/layer_a/hidden_bits1__2_carry__0_i_10/O
+                         net (fo=9, routed)           0.977    12.433    classifier/layer_a/hidden_bits1__2_carry__0_i_10_n_0
+    SLICE_X7Y59          LUT3 (Prop_lut3_I1_O)        0.124    12.557 r  classifier/layer_a/hidden_bits1__2_carry__0_i_1/O
+                         net (fo=1, routed)           0.528    13.085    classifier/layer_a/hidden_bits1__2_carry__0_i_1_n_0
+    SLICE_X4Y62          CARRY4 (Prop_carry4_DI[3]_CO[3])
+                                                      0.385    13.470 r  classifier/layer_a/hidden_bits1__2_carry__0/CO[3]
+                         net (fo=1, routed)           0.000    13.470    classifier/layer_a/hidden_bits1__2_carry__0_n_0
+    SLICE_X4Y63          CARRY4 (Prop_carry4_CI_O[1])
+                                                      0.334    13.804 r  classifier/layer_a/hidden_bits1__2_carry__1/O[1]
+                         net (fo=5, routed)           0.608    14.411    classifier/layer_a/hidden_bits1__2_carry__1_n_6
+    SLICE_X6Y62          LUT6 (Prop_lut6_I5_O)        0.303    14.714 r  classifier/layer_a/hidden_bits1__41_carry__1_i_3/O
+                         net (fo=2, routed)           0.821    15.535    classifier/layer_a/hidden_bits1__41_carry__1_i_3_n_0
+    SLICE_X2Y63          LUT5 (Prop_lut5_I0_O)        0.124    15.659 r  classifier/layer_a/hidden_bits1__41_carry__1_i_7/O
+                         net (fo=1, routed)           0.000    15.659    classifier/layer_a/hidden_bits1__41_carry__1_i_7_n_0
+    SLICE_X2Y63          CARRY4 (Prop_carry4_S[1]_CO[3])
+                                                      0.533    16.192 r  classifier/layer_a/hidden_bits1__41_carry__1/CO[3]
+                         net (fo=1, routed)           0.000    16.192    classifier/layer_a/hidden_bits1__41_carry__1_n_0
+    SLICE_X2Y64          CARRY4 (Prop_carry4_CI_CO[2])
+                                                      0.229    16.421 r  classifier/layer_a/hidden_bits1__41_carry__2/CO[2]
+                         net (fo=1, routed)           0.000    16.421    classifier/hidden_next[0]
+    SLICE_X2Y64          FDRE                                         r  classifier/hidden_q_reg[0]/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk rise edge)       20.000    20.000 r  
+    N15                                               0.000    20.000 r  clk (IN)
+                         net (fo=0)                   0.000    20.000    clk
+    N15                  IBUF (Prop_ibuf_I_O)         0.814    20.814 r  clk_IBUF_inst/O
+                         net (fo=1, routed)           1.911    22.725    clk_IBUF
+    BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.091    22.816 r  clk_IBUF_BUFG_inst/O
+                         net (fo=49, routed)          1.597    24.414    classifier/CLK
+    SLICE_X2Y64          FDRE                                         r  classifier/hidden_q_reg[0]/C
+                         clock pessimism              0.339    24.753    
+                         clock uncertainty           -0.035    24.717    
+    SLICE_X2Y64          FDRE (Setup_fdre_C_D)        0.094    24.811    classifier/hidden_q_reg[0]
+  -------------------------------------------------------------------
+                         required time                         24.811    
+                         arrival time                         -16.421    
+  -------------------------------------------------------------------
+                         slack                                  8.390    
+
+Slack (MET) :             8.737ns  (required time - arrival time)
+  Source:                 send_index_reg[3]/C
+                            (rising edge-triggered cell FDRE clocked by clk  {rise@0.000ns fall@10.000ns period=20.000ns})
+  Destination:            classifier/hidden_q_reg[6]/D
+                            (rising edge-triggered cell FDRE clocked by clk  {rise@0.000ns fall@10.000ns period=20.000ns})
+  Path Group:             clk
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            20.000ns  (clk rise@20.000ns - clk rise@0.000ns)
+  Data Path Delay:        10.996ns  (logic 2.540ns (23.100%)  route 8.456ns (76.900%))
+  Logic Levels:           8  (CARRY4=2 LUT2=1 LUT3=1 LUT5=1 LUT6=3)
+  Clock Path Skew:        -0.034ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    4.417ns = ( 24.417 - 20.000 ) 
+    Source Clock Delay      (SCD):    4.774ns
+    Clock Pessimism Removal (CPR):    0.323ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk rise edge)        0.000     0.000 r  
+    N15                                               0.000     0.000 r  clk (IN)
+                         net (fo=0)                   0.000     0.000    clk
+    N15                  IBUF (Prop_ibuf_I_O)         0.948     0.948 r  clk_IBUF_inst/O
+                         net (fo=1, routed)           2.016     2.963    clk_IBUF
+    BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.096     3.059 r  clk_IBUF_BUFG_inst/O
+                         net (fo=49, routed)          1.714     4.774    clk_IBUF_BUFG
+    SLICE_X1Y67          FDRE                                         r  send_index_reg[3]/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X1Y67          FDRE (Prop_fdre_C_Q)         0.419     5.193 r  send_index_reg[3]/Q
+                         net (fo=66, routed)          2.684     7.877    classifier/layer_a/hidden_bits1__2_carry_i_1_0[3]
+    SLICE_X12Y56         LUT6 (Prop_lut6_I3_O)        0.299     8.176 r  classifier/layer_a/g0_b15/O
+                         net (fo=51, routed)          2.177    10.352    classifier/layer_a/input_features[15]
+    SLICE_X9Y67          LUT2 (Prop_lut2_I1_O)        0.152    10.504 r  classifier/layer_a/i__carry__0_i_9/O
+                         net (fo=3, routed)           0.979    11.483    classifier/layer_a/i__carry__0_i_9_n_0
+    SLICE_X7Y62          LUT6 (Prop_lut6_I1_O)        0.326    11.809 r  classifier/layer_a/i__carry__0_i_1__0/O
+                         net (fo=24, routed)          1.318    13.127    classifier/layer_a/i__carry__0_i_1__0_n_0
+    SLICE_X6Y55          LUT5 (Prop_lut5_I3_O)        0.124    13.251 r  classifier/layer_a/i___1_carry__1_i_2/O
+                         net (fo=2, routed)           0.417    13.668    classifier/layer_a/i___1_carry__1_i_2_n_0
+    SLICE_X5Y56          LUT6 (Prop_lut6_I0_O)        0.124    13.792 r  classifier/layer_a/i___1_carry__1_i_4/O
+                         net (fo=1, routed)           0.000    13.792    classifier/layer_a/i___1_carry__1_i_4_n_0
+    SLICE_X5Y56          CARRY4 (Prop_carry4_S[0]_O[0])
+                                                      0.247    14.039 r  classifier/layer_a/hidden_bits1_inferred__5/i___1_carry__1/O[0]
+                         net (fo=3, routed)           0.881    14.920    classifier/layer_a/hidden_bits1_inferred__5/i___1_carry__1_n_7
+    SLICE_X5Y53          LUT3 (Prop_lut3_I0_O)        0.299    15.219 r  classifier/layer_a/i___34_carry__1_i_6/O
+                         net (fo=1, routed)           0.000    15.219    classifier/layer_a/i___34_carry__1_i_6_n_0
+    SLICE_X5Y53          CARRY4 (Prop_carry4_S[1]_CO[3])
+                                                      0.550    15.769 r  classifier/layer_a/hidden_bits1_inferred__5/i___34_carry__1/CO[3]
+                         net (fo=1, routed)           0.000    15.769    classifier/hidden_next[6]
+    SLICE_X5Y53          FDRE                                         r  classifier/hidden_q_reg[6]/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk rise edge)       20.000    20.000 r  
+    N15                                               0.000    20.000 r  clk (IN)
+                         net (fo=0)                   0.000    20.000    clk
+    N15                  IBUF (Prop_ibuf_I_O)         0.814    20.814 r  clk_IBUF_inst/O
+                         net (fo=1, routed)           1.911    22.725    clk_IBUF
+    BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.091    22.816 r  clk_IBUF_BUFG_inst/O
+                         net (fo=49, routed)          1.600    24.417    classifier/CLK
+    SLICE_X5Y53          FDRE                                         r  classifier/hidden_q_reg[6]/C
+                         clock pessimism              0.323    24.740    
+                         clock uncertainty           -0.035    24.704    
+    SLICE_X5Y53          FDRE (Setup_fdre_C_D)       -0.198    24.506    classifier/hidden_q_reg[6]
+  -------------------------------------------------------------------
+                         required time                         24.506    
+                         arrival time                         -15.769    
+  -------------------------------------------------------------------
+                         slack                                  8.737    
+
+Slack (MET) :             8.779ns  (required time - arrival time)
+  Source:                 send_index_reg[3]/C
+                            (rising edge-triggered cell FDRE clocked by clk  {rise@0.000ns fall@10.000ns period=20.000ns})
+  Destination:            classifier/hidden_q_reg[3]/D
+                            (rising edge-triggered cell FDRE clocked by clk  {rise@0.000ns fall@10.000ns period=20.000ns})
+  Path Group:             clk
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            20.000ns  (clk rise@20.000ns - clk rise@0.000ns)
+  Data Path Delay:        11.198ns  (logic 2.422ns (21.629%)  route 8.776ns (78.371%))
+  Logic Levels:           7  (CARRY4=2 LUT2=2 LUT4=1 LUT6=2)
+  Clock Path Skew:        -0.034ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    4.417ns = ( 24.417 - 20.000 ) 
+    Source Clock Delay      (SCD):    4.774ns
+    Clock Pessimism Removal (CPR):    0.323ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk rise edge)        0.000     0.000 r  
+    N15                                               0.000     0.000 r  clk (IN)
+                         net (fo=0)                   0.000     0.000    clk
+    N15                  IBUF (Prop_ibuf_I_O)         0.948     0.948 r  clk_IBUF_inst/O
+                         net (fo=1, routed)           2.016     2.963    clk_IBUF
+    BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.096     3.059 r  clk_IBUF_BUFG_inst/O
+                         net (fo=49, routed)          1.714     4.774    clk_IBUF_BUFG
+    SLICE_X1Y67          FDRE                                         r  send_index_reg[3]/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X1Y67          FDRE (Prop_fdre_C_Q)         0.419     5.193 r  send_index_reg[3]/Q
+                         net (fo=66, routed)          2.684     7.877    classifier/layer_a/hidden_bits1__2_carry_i_1_0[3]
+    SLICE_X12Y56         LUT6 (Prop_lut6_I3_O)        0.299     8.176 r  classifier/layer_a/g0_b15/O
+                         net (fo=51, routed)          2.177    10.352    classifier/layer_a/input_features[15]
+    SLICE_X9Y67          LUT2 (Prop_lut2_I1_O)        0.152    10.504 r  classifier/layer_a/i__carry__0_i_9/O
+                         net (fo=3, routed)           0.979    11.483    classifier/layer_a/i__carry__0_i_9_n_0
+    SLICE_X7Y62          LUT6 (Prop_lut6_I1_O)        0.326    11.809 r  classifier/layer_a/i__carry__0_i_1__0/O
+                         net (fo=24, routed)          1.587    13.396    classifier/layer_a/i__carry__0_i_1__0_n_0
+    SLICE_X6Y53          LUT2 (Prop_lut2_I1_O)        0.124    13.520 r  classifier/layer_a/i__carry__0_i_5__1__0/O
+                         net (fo=1, routed)           0.000    13.520    classifier/layer_a/i__carry__0_i_5__1__0_n_0
+    SLICE_X6Y53          CARRY4 (Prop_carry4_S[3]_O[3])
+                                                      0.255    13.775 r  classifier/layer_a/hidden_bits1_inferred__2/i__carry__0/O[3]
+                         net (fo=5, routed)           0.810    14.585    classifier/layer_a/hidden_bits1_inferred__2/i__carry__0_n_4
+    SLICE_X7Y54          LUT4 (Prop_lut4_I3_O)        0.307    14.892 r  classifier/layer_a/i___28_carry__1_i_2/O
+                         net (fo=1, routed)           0.539    15.431    classifier/layer_a/i___28_carry__1_i_2_n_0
+    SLICE_X7Y53          CARRY4 (Prop_carry4_DI[0]_CO[2])
+                                                      0.540    15.971 r  classifier/layer_a/hidden_bits1_inferred__2/i___28_carry__1/CO[2]
+                         net (fo=1, routed)           0.000    15.971    classifier/hidden_next[3]
+    SLICE_X7Y53          FDRE                                         r  classifier/hidden_q_reg[3]/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk rise edge)       20.000    20.000 r  
+    N15                                               0.000    20.000 r  clk (IN)
+                         net (fo=0)                   0.000    20.000    clk
+    N15                  IBUF (Prop_ibuf_I_O)         0.814    20.814 r  clk_IBUF_inst/O
+                         net (fo=1, routed)           1.911    22.725    clk_IBUF
+    BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.091    22.816 r  clk_IBUF_BUFG_inst/O
+                         net (fo=49, routed)          1.600    24.417    classifier/CLK
+    SLICE_X7Y53          FDRE                                         r  classifier/hidden_q_reg[3]/C
+                         clock pessimism              0.323    24.740    
+                         clock uncertainty           -0.035    24.704    
+    SLICE_X7Y53          FDRE (Setup_fdre_C_D)        0.046    24.750    classifier/hidden_q_reg[3]
+  -------------------------------------------------------------------
+                         required time                         24.750    
+                         arrival time                         -15.971    
+  -------------------------------------------------------------------
+                         slack                                  8.779    
+
+Slack (MET) :             10.076ns  (required time - arrival time)
+  Source:                 send_index_reg[1]/C
+                            (rising edge-triggered cell FDRE clocked by clk  {rise@0.000ns fall@10.000ns period=20.000ns})
+  Destination:            classifier/hidden_q_reg[7]/D
+                            (rising edge-triggered cell FDRE clocked by clk  {rise@0.000ns fall@10.000ns period=20.000ns})
+  Path Group:             clk
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            20.000ns  (clk rise@20.000ns - clk rise@0.000ns)
+  Data Path Delay:        9.868ns  (logic 3.313ns (33.574%)  route 6.555ns (66.426%))
+  Logic Levels:           10  (CARRY4=6 LUT1=1 LUT3=1 LUT5=1 LUT6=1)
+  Clock Path Skew:        -0.115ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    4.338ns = ( 24.338 - 20.000 ) 
+    Source Clock Delay      (SCD):    4.776ns
+    Clock Pessimism Removal (CPR):    0.323ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk rise edge)        0.000     0.000 r  
+    N15                                               0.000     0.000 r  clk (IN)
+                         net (fo=0)                   0.000     0.000    clk
+    N15                  IBUF (Prop_ibuf_I_O)         0.948     0.948 r  clk_IBUF_inst/O
+                         net (fo=1, routed)           2.016     2.963    clk_IBUF
+    BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.096     3.059 r  clk_IBUF_BUFG_inst/O
+                         net (fo=49, routed)          1.716     4.776    clk_IBUF_BUFG
+    SLICE_X1Y65          FDRE                                         r  send_index_reg[1]/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X1Y65          FDRE (Prop_fdre_C_Q)         0.456     5.232 r  send_index_reg[1]/Q
+                         net (fo=68, routed)          2.182     7.413    classifier/layer_a/hidden_bits1__2_carry_i_1_0[1]
+    SLICE_X1Y57          LUT6 (Prop_lut6_I1_O)        0.124     7.537 f  classifier/layer_a/g0_b30/O
+                         net (fo=46, routed)          2.050     9.587    classifier/layer_a/input_features[30]
+    SLICE_X9Y55          LUT1 (Prop_lut1_I0_O)        0.124     9.711 r  classifier/layer_a/i__carry_i_3__3/O
+                         net (fo=1, routed)           0.000     9.711    classifier/layer_a/i__carry_i_3__3_n_0
+    SLICE_X9Y55          CARRY4 (Prop_carry4_S[1]_CO[3])
+                                                      0.550    10.261 r  classifier/layer_a/hidden_bits6_inferred__4/i__carry/CO[3]
+                         net (fo=1, routed)           0.000    10.261    classifier/layer_a/hidden_bits6_inferred__4/i__carry_n_0
+    SLICE_X9Y56          CARRY4 (Prop_carry4_CI_O[1])
+                                                      0.334    10.595 r  classifier/layer_a/hidden_bits6_inferred__4/i__carry__0/O[1]
+                         net (fo=1, routed)           0.358    10.953    classifier/layer_a/hidden_bits6_inferred__4/i__carry__0_n_6
+    SLICE_X8Y56          CARRY4 (Prop_carry4_S[0]_O[0])
+                                                      0.555    11.508 r  classifier/layer_a/hidden_bits6_inferred__4/i___19_carry/O[0]
+                         net (fo=5, routed)           1.308    12.816    classifier/layer_a/hidden_bits6_inferred__4/i___19_carry_n_7
+    SLICE_X9Y53          LUT3 (Prop_lut3_I2_O)        0.295    13.111 r  classifier/layer_a/i___2_carry__0_i_11/O
+                         net (fo=1, routed)           0.657    13.768    classifier/layer_a/i___2_carry__0_i_11_n_0
+    SLICE_X8Y53          LUT5 (Prop_lut5_I4_O)        0.124    13.892 r  classifier/layer_a/i___2_carry__0_i_6__1/O
+                         net (fo=1, routed)           0.000    13.892    classifier/layer_a/i___2_carry__0_i_6__1_n_0
+    SLICE_X8Y53          CARRY4 (Prop_carry4_S[2]_CO[3])
+                                                      0.380    14.272 r  classifier/layer_a/hidden_bits1_inferred__6/i___2_carry__0/CO[3]
+                         net (fo=1, routed)           0.000    14.272    classifier/layer_a/hidden_bits1_inferred__6/i___2_carry__0_n_0
+    SLICE_X8Y54          CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.117    14.389 r  classifier/layer_a/hidden_bits1_inferred__6/i___2_carry__1/CO[3]
+                         net (fo=1, routed)           0.000    14.389    classifier/layer_a/hidden_bits1_inferred__6/i___2_carry__1_n_0
+    SLICE_X8Y55          CARRY4 (Prop_carry4_CI_CO[0])
+                                                      0.254    14.643 r  classifier/layer_a/hidden_bits1_inferred__6/i___2_carry__2/CO[0]
+                         net (fo=1, routed)           0.000    14.643    classifier/hidden_next[7]
+    SLICE_X8Y55          FDRE                                         r  classifier/hidden_q_reg[7]/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk rise edge)       20.000    20.000 r  
+    N15                                               0.000    20.000 r  clk (IN)
+                         net (fo=0)                   0.000    20.000    clk
+    N15                  IBUF (Prop_ibuf_I_O)         0.814    20.814 r  clk_IBUF_inst/O
+                         net (fo=1, routed)           1.911    22.725    clk_IBUF
+    BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.091    22.816 r  clk_IBUF_BUFG_inst/O
+                         net (fo=49, routed)          1.521    24.338    classifier/CLK
+    SLICE_X8Y55          FDRE                                         r  classifier/hidden_q_reg[7]/C
+                         clock pessimism              0.323    24.661    
+                         clock uncertainty           -0.035    24.625    
+    SLICE_X8Y55          FDRE (Setup_fdre_C_D)        0.094    24.719    classifier/hidden_q_reg[7]
+  -------------------------------------------------------------------
+                         required time                         24.719    
+                         arrival time                         -14.643    
+  -------------------------------------------------------------------
+                         slack                                 10.076    
+
+Slack (MET) :             15.609ns  (required time - arrival time)
+  Source:                 checked_count_reg[1]/C
+                            (rising edge-triggered cell FDRE clocked by clk  {rise@0.000ns fall@10.000ns period=20.000ns})
+  Destination:            pass_reg/CE
+                            (rising edge-triggered cell FDRE clocked by clk  {rise@0.000ns fall@10.000ns period=20.000ns})
+  Path Group:             clk
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            20.000ns  (clk rise@20.000ns - clk rise@0.000ns)
+  Data Path Delay:        4.125ns  (logic 0.828ns (20.073%)  route 3.297ns (79.927%))
+  Logic Levels:           3  (LUT3=1 LUT5=2)
+  Clock Path Skew:        -0.026ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    4.418ns = ( 24.418 - 20.000 ) 
+    Source Clock Delay      (SCD):    4.783ns
+    Clock Pessimism Removal (CPR):    0.339ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk rise edge)        0.000     0.000 r  
+    N15                                               0.000     0.000 r  clk (IN)
+                         net (fo=0)                   0.000     0.000    clk
+    N15                  IBUF (Prop_ibuf_I_O)         0.948     0.948 r  clk_IBUF_inst/O
+                         net (fo=1, routed)           2.016     2.963    clk_IBUF
+    BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.096     3.059 r  clk_IBUF_BUFG_inst/O
+                         net (fo=49, routed)          1.723     4.783    clk_IBUF_BUFG
+    SLICE_X0Y53          FDRE                                         r  checked_count_reg[1]/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X0Y53          FDRE (Prop_fdre_C_Q)         0.456     5.239 r  checked_count_reg[1]/Q
+                         net (fo=6, routed)           0.732     5.971    checked_count_OBUF[1]
+    SLICE_X0Y53          LUT5 (Prop_lut5_I1_O)        0.124     6.095 f  done_i_3/O
+                         net (fo=3, routed)           0.819     6.914    classifier/checked_count_reg[6]_1
+    SLICE_X1Y55          LUT5 (Prop_lut5_I4_O)        0.124     7.038 r  classifier/done_i_2/O
+                         net (fo=7, routed)           0.980     8.018    classifier/checked_count_reg[6]
+    SLICE_X1Y58          LUT3 (Prop_lut3_I0_O)        0.124     8.142 r  classifier/pass_i_1/O
+                         net (fo=1, routed)           0.765     8.907    classifier_n_7
+    SLICE_X1Y58          FDRE                                         r  pass_reg/CE
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk rise edge)       20.000    20.000 r  
+    N15                                               0.000    20.000 r  clk (IN)
+                         net (fo=0)                   0.000    20.000    clk
+    N15                  IBUF (Prop_ibuf_I_O)         0.814    20.814 r  clk_IBUF_inst/O
+                         net (fo=1, routed)           1.911    22.725    clk_IBUF
+    BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.091    22.816 r  clk_IBUF_BUFG_inst/O
+                         net (fo=49, routed)          1.601    24.418    clk_IBUF_BUFG
+    SLICE_X1Y58          FDRE                                         r  pass_reg/C
+                         clock pessimism              0.339    24.757    
+                         clock uncertainty           -0.035    24.721    
+    SLICE_X1Y58          FDRE (Setup_fdre_C_CE)      -0.205    24.516    pass_reg
+  -------------------------------------------------------------------
+                         required time                         24.516    
+                         arrival time                          -8.907    
+  -------------------------------------------------------------------
+                         slack                                 15.609    
+
+Slack (MET) :             15.698ns  (required time - arrival time)
+  Source:                 checked_count_reg[1]/C
+                            (rising edge-triggered cell FDRE clocked by clk  {rise@0.000ns fall@10.000ns period=20.000ns})
+  Destination:            busy_reg/R
+                            (rising edge-triggered cell FDRE clocked by clk  {rise@0.000ns fall@10.000ns period=20.000ns})
+  Path Group:             clk
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            20.000ns  (clk rise@20.000ns - clk rise@0.000ns)
+  Data Path Delay:        3.810ns  (logic 0.828ns (21.730%)  route 2.982ns (78.270%))
+  Logic Levels:           3  (LUT2=1 LUT5=2)
+  Clock Path Skew:        -0.027ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    4.417ns = ( 24.417 - 20.000 ) 
+    Source Clock Delay      (SCD):    4.783ns
+    Clock Pessimism Removal (CPR):    0.339ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk rise edge)        0.000     0.000 r  
+    N15                                               0.000     0.000 r  clk (IN)
+                         net (fo=0)                   0.000     0.000    clk
+    N15                  IBUF (Prop_ibuf_I_O)         0.948     0.948 r  clk_IBUF_inst/O
+                         net (fo=1, routed)           2.016     2.963    clk_IBUF
+    BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.096     3.059 r  clk_IBUF_BUFG_inst/O
+                         net (fo=49, routed)          1.723     4.783    clk_IBUF_BUFG
+    SLICE_X0Y53          FDRE                                         r  checked_count_reg[1]/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X0Y53          FDRE (Prop_fdre_C_Q)         0.456     5.239 r  checked_count_reg[1]/Q
+                         net (fo=6, routed)           0.732     5.971    checked_count_OBUF[1]
+    SLICE_X0Y53          LUT5 (Prop_lut5_I1_O)        0.124     6.095 f  done_i_3/O
+                         net (fo=3, routed)           0.819     6.914    classifier/checked_count_reg[6]_1
+    SLICE_X1Y55          LUT5 (Prop_lut5_I4_O)        0.124     7.038 r  classifier/done_i_2/O
+                         net (fo=7, routed)           0.615     7.653    classifier/checked_count_reg[6]
+    SLICE_X1Y59          LUT2 (Prop_lut2_I0_O)        0.124     7.777 r  classifier/busy_i_1/O
+                         net (fo=1, routed)           0.816     8.593    classifier_n_9
+    SLICE_X1Y59          FDRE                                         r  busy_reg/R
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk rise edge)       20.000    20.000 r  
+    N15                                               0.000    20.000 r  clk (IN)
+                         net (fo=0)                   0.000    20.000    clk
+    N15                  IBUF (Prop_ibuf_I_O)         0.814    20.814 r  clk_IBUF_inst/O
+                         net (fo=1, routed)           1.911    22.725    clk_IBUF
+    BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.091    22.816 r  clk_IBUF_BUFG_inst/O
+                         net (fo=49, routed)          1.600    24.417    clk_IBUF_BUFG
+    SLICE_X1Y59          FDRE                                         r  busy_reg/C
+                         clock pessimism              0.339    24.756    
+                         clock uncertainty           -0.035    24.720    
+    SLICE_X1Y59          FDRE (Setup_fdre_C_R)       -0.429    24.291    busy_reg
+  -------------------------------------------------------------------
+                         required time                         24.291    
+                         arrival time                          -8.593    
+  -------------------------------------------------------------------
+                         slack                                 15.698    
+
+
+
+

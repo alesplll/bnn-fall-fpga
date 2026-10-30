@@ -1,0 +1,3 @@
+Time resolution is 1 ps
+PASS: FPGA prototype self-test; 64 vectors, error detection and restart
+$finish called at time : 3896 ns : File "D:/neuroproc/bnn-fall-fpga/fpga/tb_fpga_top.v" Line 69

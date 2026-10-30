@@ -1,0 +1,3 @@
+Time resolution is 1 ps
+PASS: benchmark pipelined, 2331 vectors
+$finish called at time : 23466 ns : File "D:/neuroproc/bnn-fall-fpga/fpga/tb_bnn_benchmark_pipeline.v" Line 63
