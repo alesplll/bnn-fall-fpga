@@ -1,0 +1,278 @@
+
+*** Running vivado
+    with args -log fpga_top_pipelined.vds -m64 -product Vivado -mode batch -messageDb vivado.pb -notrace -source fpga_top_pipelined.tcl
+
+
+
+****** Vivado v2022.2 (64-bit)
+  **** SW Build 3671981 on Fri Oct 14 05:00:03 MDT 2022
+  **** IP Build 3669848 on Fri Oct 14 08:30:02 MDT 2022
+    ** Copyright 1986-2022 Xilinx, Inc. All Rights Reserved.
+
+source fpga_top_pipelined.tcl -notrace
+create_project: Time (s): cpu = 00:00:06 ; elapsed = 00:00:07 . Memory (MB): peak = 379.379 ; gain = 50.566
+Command: synth_design -top fpga_top_pipelined -part xc7a100tcsg324-1 -incremental_mode off
+Starting synth_design
+Attempting to get a license for feature 'Synthesis' and/or device 'xc7a100t'
+INFO: [Common 17-349] Got license for feature 'Synthesis' and/or device 'xc7a100t'
+INFO: [Device 21-403] Loading part xc7a100tcsg324-1
+INFO: [Synth 8-7079] Multithreading enabled for synth_design using a maximum of 2 processes.
+INFO: [Synth 8-7078] Launching helper process for spawning children vivado processes
+INFO: [Synth 8-7075] Helper process launched with PID 8584
+INFO: [Synth 8-11241] undeclared symbol 'REGCCE', assumed default net type 'wire' [D:/DOWNLOADS/Xilinx_Windows_Unpacked_2022_2/Xilinx_Windows_Unpacked_2022_2/Vivado/2022.2/data/verilog/src/unimacro/BRAM_SINGLE_MACRO.v:2170]
+---------------------------------------------------------------------------------
+Starting RTL Elaboration : Time (s): cpu = 00:00:07 ; elapsed = 00:00:08 . Memory (MB): peak = 1205.504 ; gain = 407.879
+---------------------------------------------------------------------------------
+INFO: [Synth 8-6157] synthesizing module 'fpga_top_pipelined' [D:/neuroproc/bnn-fall-fpga/fpga/fpga_top_pipelined.v:4]
+INFO: [Synth 8-3876] $readmem data file 'tb_inputs_64.mem' is read successfully [D:/neuroproc/bnn-fall-fpga/fpga/fpga_top_pipelined.v:27]
+INFO: [Synth 8-3876] $readmem data file 'tb_expected_64.mem' is read successfully [D:/neuroproc/bnn-fall-fpga/fpga/fpga_top_pipelined.v:28]
+INFO: [Synth 8-6157] synthesizing module 'bnn_classifier_pipelined' [D:/neuroproc/bnn-fall-fpga/rtl/bnn_classifier_pipelined.v:4]
+INFO: [Synth 8-6157] synthesizing module 'bnn_layer_a' [D:/neuroproc/bnn-fall-fpga/rtl/bnn_layer_a.v:4]
+	Parameter W_FILE bound to: weights_layerA_W.mem - type: string 
+	Parameter B_FILE bound to: weights_layerA_b.mem - type: string 
+INFO: [Synth 8-3876] $readmem data file 'weights_layerA_W.mem' is read successfully [D:/neuroproc/bnn-fall-fpga/rtl/bnn_layer_a.v:15]
+INFO: [Synth 8-3876] $readmem data file 'weights_layerA_b.mem' is read successfully [D:/neuroproc/bnn-fall-fpga/rtl/bnn_layer_a.v:16]
+INFO: [Synth 8-6155] done synthesizing module 'bnn_layer_a' (0#1) [D:/neuroproc/bnn-fall-fpga/rtl/bnn_layer_a.v:4]
+INFO: [Synth 8-6157] synthesizing module 'bnn_layer_b' [D:/neuroproc/bnn-fall-fpga/rtl/bnn_layer_b.v:4]
+	Parameter W_FILE bound to: weights_layerB_W.mem - type: string 
+	Parameter B_FILE bound to: weights_layerB_b.mem - type: string 
+INFO: [Synth 8-3876] $readmem data file 'weights_layerB_W.mem' is read successfully [D:/neuroproc/bnn-fall-fpga/rtl/bnn_layer_b.v:16]
+INFO: [Synth 8-3876] $readmem data file 'weights_layerB_b.mem' is read successfully [D:/neuroproc/bnn-fall-fpga/rtl/bnn_layer_b.v:17]
+INFO: [Synth 8-6155] done synthesizing module 'bnn_layer_b' (0#1) [D:/neuroproc/bnn-fall-fpga/rtl/bnn_layer_b.v:4]
+INFO: [Synth 8-6155] done synthesizing module 'bnn_classifier_pipelined' (0#1) [D:/neuroproc/bnn-fall-fpga/rtl/bnn_classifier_pipelined.v:4]
+INFO: [Synth 8-6155] done synthesizing module 'fpga_top_pipelined' (0#1) [D:/neuroproc/bnn-fall-fpga/fpga/fpga_top_pipelined.v:4]
+WARNING: [Synth 8-4767] Trying to implement RAM ' ' in registers. Block RAM or DRAM implementation is not possible; see log for reasons.
+	1: RAM's read address port stuck at constant. 
+	2: Unable to determine number of words or word size in RAM. 
+	3: No valid read/write found for RAM. 
+RAM dissolved into registers
+---------------------------------------------------------------------------------
+Finished RTL Elaboration : Time (s): cpu = 00:00:09 ; elapsed = 00:00:10 . Memory (MB): peak = 1300.891 ; gain = 503.266
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Handling Custom Attributes
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Handling Custom Attributes : Time (s): cpu = 00:00:09 ; elapsed = 00:00:10 . Memory (MB): peak = 1300.891 ; gain = 503.266
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished RTL Optimization Phase 1 : Time (s): cpu = 00:00:09 ; elapsed = 00:00:10 . Memory (MB): peak = 1300.891 ; gain = 503.266
+---------------------------------------------------------------------------------
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.013 . Memory (MB): peak = 1300.891 ; gain = 0.000
+INFO: [Project 1-570] Preparing netlist for logic optimization
+
+Processing XDC Constraints
+Initializing timing engine
+Parsing XDC File [D:/neuroproc/bnn-fall-fpga/vivado_pr23/clock_run.xdc]
+Finished Parsing XDC File [D:/neuroproc/bnn-fall-fpga/vivado_pr23/clock_run.xdc]
+Completed Processing XDC Constraints
+
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 1349.141 ; gain = 0.000
+INFO: [Project 1-111] Unisim Transformation Summary:
+No Unisim elements were transformed.
+
+Constraint Validation Runtime : Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.008 . Memory (MB): peak = 1349.141 ; gain = 0.000
+INFO: [Designutils 20-5008] Incremental synthesis strategy off
+INFO: [Synth 8-11241] undeclared symbol 'REGCCE', assumed default net type 'wire' [D:/DOWNLOADS/Xilinx_Windows_Unpacked_2022_2/Xilinx_Windows_Unpacked_2022_2/Vivado/2022.2/data/verilog/src/unimacro/BRAM_SINGLE_MACRO.v:2170]
+---------------------------------------------------------------------------------
+Finished Constraint Validation : Time (s): cpu = 00:00:19 ; elapsed = 00:00:21 . Memory (MB): peak = 1349.141 ; gain = 551.516
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Loading Part and Timing Information
+---------------------------------------------------------------------------------
+Loading part: xc7a100tcsg324-1
+---------------------------------------------------------------------------------
+Finished Loading Part and Timing Information : Time (s): cpu = 00:00:19 ; elapsed = 00:00:21 . Memory (MB): peak = 1349.141 ; gain = 551.516
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Applying 'set_property' XDC Constraints
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished applying 'set_property' XDC Constraints : Time (s): cpu = 00:00:19 ; elapsed = 00:00:21 . Memory (MB): peak = 1349.141 ; gain = 551.516
+---------------------------------------------------------------------------------
+INFO: [Synth 8-802] inferred FSM for state register 'state_reg' in module 'fpga_top_pipelined'
+---------------------------------------------------------------------------------------------------
+                   State |                     New Encoding |                Previous Encoding 
+---------------------------------------------------------------------------------------------------
+                    IDLE |                              001 |                               00
+                    SEND |                              010 |                               01
+                   DRAIN |                              100 |                               10
+---------------------------------------------------------------------------------------------------
+INFO: [Synth 8-3354] encoded FSM with state register 'state_reg' using encoding 'one-hot' in module 'fpga_top_pipelined'
+---------------------------------------------------------------------------------
+Finished RTL Optimization Phase 2 : Time (s): cpu = 00:00:20 ; elapsed = 00:00:22 . Memory (MB): peak = 1349.141 ; gain = 551.516
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start RTL Component Statistics 
+---------------------------------------------------------------------------------
+Detailed RTL Component Info : 
++---Adders : 
+	   6 Input   32 Bit       Adders := 8     
+	   2 Input   32 Bit       Adders := 1     
+	   2 Input    7 Bit       Adders := 2     
+	   2 Input    6 Bit       Adders := 1     
+	   8 Input    4 Bit       Adders := 1     
++---XORs : 
+	   2 Input      4 Bit         XORs := 4     
++---Registers : 
+	                8 Bit    Registers := 1     
+	                7 Bit    Registers := 2     
+	                6 Bit    Registers := 3     
+	                1 Bit    Registers := 7     
++---Muxes : 
+	   2 Input    7 Bit        Muxes := 3     
+	   3 Input    6 Bit        Muxes := 1     
+	   2 Input    1 Bit        Muxes := 12    
+	   3 Input    1 Bit        Muxes := 4     
+---------------------------------------------------------------------------------
+Finished RTL Component Statistics 
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Part Resource Summary
+---------------------------------------------------------------------------------
+Part Resources:
+DSPs: 240 (col length:80)
+BRAMs: 270 (col length: RAMB18 80 RAMB36 40)
+---------------------------------------------------------------------------------
+Finished Part Resource Summary
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Cross Boundary and Area Optimization
+---------------------------------------------------------------------------------
+WARNING: [Synth 8-7080] Parallel synthesis criteria is not met
+WARNING: [Synth 8-3332] Sequential element (FSM_onehot_state_reg[2]) is unused and will be removed from module fpga_top_pipelined.
+---------------------------------------------------------------------------------
+Finished Cross Boundary and Area Optimization : Time (s): cpu = 00:00:24 ; elapsed = 00:00:26 . Memory (MB): peak = 1349.141 ; gain = 551.516
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start ROM, RAM, DSP, Shift Register and Retiming Reporting
+---------------------------------------------------------------------------------
+
+ROM: Preliminary Mapping Report
++-------------------+------------+---------------+----------------+
+|Module Name        | RTL Object | Depth x Width | Implemented As | 
++-------------------+------------+---------------+----------------+
+|fpga_top_pipelined | expected   | 64x1          | LUT            | 
+|fpga_top_pipelined | vectors    | 64x36         | LUT            | 
+|fpga_top_pipelined | p_0_out    | 64x36         | LUT            | 
++-------------------+------------+---------------+----------------+
+
+---------------------------------------------------------------------------------
+Finished ROM, RAM, DSP, Shift Register and Retiming Reporting
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Applying XDC Timing Constraints
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Applying XDC Timing Constraints : Time (s): cpu = 00:00:29 ; elapsed = 00:00:33 . Memory (MB): peak = 1349.141 ; gain = 551.516
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Timing Optimization
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Timing Optimization : Time (s): cpu = 00:00:32 ; elapsed = 00:00:35 . Memory (MB): peak = 1351.188 ; gain = 553.562
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Technology Mapping
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Technology Mapping : Time (s): cpu = 00:00:32 ; elapsed = 00:00:35 . Memory (MB): peak = 1351.188 ; gain = 553.562
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start IO Insertion
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Flattening Before IO Insertion
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Flattening Before IO Insertion
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Final Netlist Cleanup
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Final Netlist Cleanup
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished IO Insertion : Time (s): cpu = 00:00:37 ; elapsed = 00:00:41 . Memory (MB): peak = 1351.188 ; gain = 553.562
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Renaming Generated Instances
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Renaming Generated Instances : Time (s): cpu = 00:00:37 ; elapsed = 00:00:41 . Memory (MB): peak = 1351.188 ; gain = 553.562
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Rebuilding User Hierarchy
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Rebuilding User Hierarchy : Time (s): cpu = 00:00:38 ; elapsed = 00:00:41 . Memory (MB): peak = 1351.188 ; gain = 553.562
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Renaming Generated Ports
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Renaming Generated Ports : Time (s): cpu = 00:00:38 ; elapsed = 00:00:41 . Memory (MB): peak = 1351.188 ; gain = 553.562
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Handling Custom Attributes
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Handling Custom Attributes : Time (s): cpu = 00:00:38 ; elapsed = 00:00:41 . Memory (MB): peak = 1351.188 ; gain = 553.562
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Renaming Generated Nets
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Renaming Generated Nets : Time (s): cpu = 00:00:38 ; elapsed = 00:00:41 . Memory (MB): peak = 1351.188 ; gain = 553.562
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Writing Synthesis Report
+---------------------------------------------------------------------------------
+
+Report BlackBoxes: 
++-+--------------+----------+
+| |BlackBox name |Instances |
++-+--------------+----------+
++-+--------------+----------+
+
+Report Cell Usage: 
++------+-------+------+
+|      |Cell   |Count |
++------+-------+------+
+|1     |BUFG   |     1|
+|2     |CARRY4 |   143|
+|3     |LUT1   |    59|
+|4     |LUT2   |   221|
+|5     |LUT3   |   115|
+|6     |LUT4   |   100|
+|7     |LUT5   |    92|
+|8     |LUT6   |   229|
+|9     |FDRE   |    49|
+|10    |IBUF   |     3|
+|11    |OBUF   |    18|
++------+-------+------+
+---------------------------------------------------------------------------------
+Finished Writing Synthesis Report : Time (s): cpu = 00:00:38 ; elapsed = 00:00:41 . Memory (MB): peak = 1351.188 ; gain = 553.562
+---------------------------------------------------------------------------------
+Synthesis finished with 0 errors, 0 critical warnings and 2 warnings.
+Synthesis Optimization Runtime : Time (s): cpu = 00:00:26 ; elapsed = 00:00:39 . Memory (MB): peak = 1351.188 ; gain = 505.312
+Synthesis Optimization Complete : Time (s): cpu = 00:00:38 ; elapsed = 00:00:42 . Memory (MB): peak = 1351.188 ; gain = 553.562
+INFO: [Project 1-571] Translating synthesized netlist
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.010 . Memory (MB): peak = 1363.094 ; gain = 0.000
+INFO: [Netlist 29-17] Analyzing 143 Unisim elements for replacement
+INFO: [Netlist 29-28] Unisim Transformation completed in 0 CPU seconds
+INFO: [Project 1-570] Preparing netlist for logic optimization
+INFO: [Opt 31-138] Pushed 0 inverter(s) to 0 load pin(s).
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 1366.750 ; gain = 0.000
+INFO: [Project 1-111] Unisim Transformation Summary:
+No Unisim elements were transformed.
+
+Synth Design complete, checksum: c63f5633
+INFO: [Common 17-83] Releasing license: Synthesis
+33 Infos, 3 Warnings, 0 Critical Warnings and 0 Errors encountered.
+synth_design completed successfully
+synth_design: Time (s): cpu = 00:00:43 ; elapsed = 00:00:49 . Memory (MB): peak = 1366.750 ; gain = 987.371
+INFO: [Common 17-1381] The checkpoint 'D:/neuroproc/bnn-fall-fpga/vivado_pr23/bnn_pr23.runs/synth_1/fpga_top_pipelined.dcp' has been generated.
+INFO: [runtcl-4] Executing : report_utilization -file fpga_top_pipelined_utilization_synth.rpt -pb fpga_top_pipelined_utilization_synth.pb
+INFO: [Common 17-206] Exiting Vivado at Thu Oct 29 01:37:39 2026...

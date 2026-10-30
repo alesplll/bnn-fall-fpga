@@ -14,7 +14,6 @@ def write_mem(name: str, values: list[int], bits: int) -> None:
     mask = (1 << bits) - 1
     width = bits // 4
     with (WEIGHTS / name).open("w", encoding="ascii") as file:
-        file.write(f"// {len(values)} golden vectors, {bits} bits each\n")
         file.writelines(f"{value & mask:0{width}x}\n" for value in values)
 
 

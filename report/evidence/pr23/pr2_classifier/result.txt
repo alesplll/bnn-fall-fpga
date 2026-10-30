@@ -1,0 +1,3 @@
+top=bnn_classifier
+requested_period_ns=20.0
+synthesis_status=synth_design Complete!
